@@ -39,26 +39,31 @@ namespace Maze.Classes
 			Rectangle.Height = Parent.CellHeight;
 
 			int left, top;
-			if (Column == 1)
+			if (Column == 0)
 				left = 0;
 			else
-				left = Parent.CellWidth * (Column - 1);
+				left = Parent.CellWidth * Column;
 
-			if (Row == 1)
+			if (Row == 0)
 				top = 0;
 			else
-				top = Parent.CellHeight * (Row - 1);
+				top = Parent.CellHeight * Row;
 
 			Canvas.SetLeft(Rectangle, left);
 			Canvas.SetTop(Rectangle, top);
 		}
 
-		// Redraw the cell in the screen with the current sizes
+		/// <summary>
+		/// Redraw the cell in the screen with the current sizes
+		/// </summary>
 		public void Redraw()
 		{
 			SetRectangle();
 		}
 
+		/// <summary>
+		/// Revert the type cell from bloked to unblocked and vice versa
+		/// </summary>
 		public void RevertType()
 		{
 			if (Type == CellType.Free)
@@ -73,6 +78,10 @@ namespace Maze.Classes
 			}
 		}
 
+		/// <summary>
+		/// Set the background color of the cell
+		/// </summary>
+		/// <param name="color"></param>
 		public void SetColor(Color color)
 		{
 			Rectangle.Fill = new SolidColorBrush(color);

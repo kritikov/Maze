@@ -105,13 +105,33 @@ namespace Maze
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			this.MazeConstructor.Construct();
+			Message = "";
+
+			try
+			{
+				this.MazeConstructor.Construct();
+			}
+			catch (Exception ex)
+			{
+				Message = ex.Message;
+			}
 		}
 
 		private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			MazeConstructor.Redraw();
+			Message = "";
+
+			try
+			{
+				if (MazeConstructor.Cells != null)
+					MazeConstructor.Redraw();
+			}
+			catch (Exception ex)
+			{
+				Message = ex.Message;
+			}
 		}
+	
 		#endregion
 
 
@@ -138,15 +158,12 @@ namespace Maze
 			MazeConstructor.RevertCellType((int)point.X, (int)point.Y);
 		}
 
+		private void SearchSolution(object sender, RoutedEventArgs e)
+		{
 
+		}
 
 		#endregion
 
-		private void SearchSolution(object sender, RoutedEventArgs e)
-		{
-			
-		}
-
-		
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Windows.Controls;
@@ -22,7 +23,9 @@ namespace Maze.Classes
 		public int CellHeight => (int)(Height / Rows);
 		public Brush Background = new SolidColorBrush(Colors.White);
 		public Canvas Canvas;
-		public List<Cell> Cells = new List<Cell>();
+		//public List<Cell> Cells = new List<Cell>();
+
+		public Cell[,] Cells;
 
 		#endregion
 
@@ -53,12 +56,12 @@ namespace Maze.Classes
 		// Create the cells of the maze
 		public void CreateCells()
 		{
-			Cells.Clear();
+			Cells = new Cell[Rows, Columns];
 			Canvas.Children.Clear();
 
-			for (int i = 1; i <= Columns; i++)
+			for (int i = 0; i < Columns; i++)
 			{
-				for (int j = 1; j <= Rows; j++)
+				for (int j = 0; j < Rows; j++)
 				{
 					CreateCell(i, j);
 				}
@@ -68,12 +71,19 @@ namespace Maze.Classes
 		// Create one cell of the maze
 		public void CreateCell(int column, int row)
 		{
-			if (row > Rows || column > Columns)
-				return;
+			try
+			{
+				if (row >= Rows || column >= Columns)
+					return;
 
-			Cell cell = new Cell(this, column, row);
-			Cells.Add(cell);
-			Canvas.Children.Add(cell.Rectangle);
+				Cell cell = new Cell(this, column, row);
+				Cells[row, column] = cell;
+				Canvas.Children.Add(cell.Rectangle);
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
 		}
 
 		/// <summary>
@@ -81,21 +91,32 @@ namespace Maze.Classes
 		/// </summary>
 		public void Redraw()
 		{
-			foreach(var cell in Cells)
+			for (int i=0; i < Rows; i++)
 			{
-				cell.SetRectangle();
+				for (int j = 0; j < Columns; j++)
+				{
+					Cells[i,j].SetRectangle();
+
+				}
 			}
 		}
 
 		public Cell GetCell(int posX, int posY)
 		{
-			int column = (int)(posX / CellWidth) + 1;
-			int row = (int)(posY / CellHeight) + 1;
+			try
+			{
+				int column = (int)(posX / CellWidth);
+				int row = (int)(posY / CellHeight);
 
-			var cell = this.Cells.Where(p => p.Row == row && p.Column == column).FirstOrDefault();
-			cell.SetColor(Colors.AliceBlue);
+				var cell = Cells[row, column];
+				cell.SetColor(Colors.AliceBlue);
 
-			return cell;
+				return cell;
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
 		}
 
 		public void RevertCellType(int posX, int posY)
