@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -24,6 +25,10 @@ namespace Maze.Classes
 			Column = column;
 			Row = row;
 
+			Random random = new Random();
+			double blockedPossibility = random.NextDouble();
+			Type = Parent.BlockedPossibility > blockedPossibility ? CellType.Blocked : CellType.Free;
+
 			SetRectangle();
 		}
 
@@ -34,7 +39,12 @@ namespace Maze.Classes
 		{
 			Rectangle.Stroke = new SolidColorBrush(Colors.Black);
 			Rectangle.StrokeThickness = 1;
-			//Rectangle.Fill = new SolidColorBrush(Colors.Black);
+
+			if (Type == CellType.Free)
+				Rectangle.Fill = new SolidColorBrush(Colors.White);
+			else
+				Rectangle.Fill = new SolidColorBrush(Colors.DarkBlue);
+
 			Rectangle.Width = Parent.CellWidth;
 			Rectangle.Height = Parent.CellHeight;
 

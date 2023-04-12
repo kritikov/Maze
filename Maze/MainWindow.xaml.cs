@@ -47,6 +47,28 @@ namespace Maze
 
 		public MazeConstructor MazeConstructor { get; set; }
 
+		private int n = 5;
+		public int N
+		{
+			get { return n; }
+			set
+			{
+				n = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("N"));
+			}
+		}
+
+		private double p = 0.5;
+		public double P
+		{
+			get { return p; }
+			set
+			{
+				p = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("P"));
+			}
+		}
+
 		#endregion
 
 
@@ -109,7 +131,7 @@ namespace Maze
 
 			try
 			{
-				this.MazeConstructor.Construct();
+				this.MazeConstructor.Construct(N, N, P);
 			}
 			catch (Exception ex)
 			{
@@ -131,7 +153,21 @@ namespace Maze
 				Message = ex.Message;
 			}
 		}
-	
+
+		private void RecreateMaze(object sender, RoutedEventArgs e)
+		{
+			Message = "";
+
+			try
+			{
+				this.MazeConstructor.Construct(N, N, P);
+			}
+			catch (Exception ex)
+			{
+				Message = ex.Message;
+			}
+		}
+
 		#endregion
 
 
@@ -165,5 +201,6 @@ namespace Maze
 
 		#endregion
 
+		
 	}
 }

@@ -17,6 +17,7 @@ namespace Maze.Classes
 
 		public int Rows = 5;
 		public int Columns = 5;
+		public double BlockedPossibility = 0.5;
 		public double Width => Canvas.ActualWidth;
 		public int CellWidth => (int)(Width / Columns);
 		public double Height => Canvas.ActualHeight;
@@ -45,8 +46,12 @@ namespace Maze.Classes
 		/// <summary>
 		/// Create the maze. This is used only once and when we change the number of cells
 		/// </summary>
-		public void Construct()
+		public void Construct(int rows, int columns, double blockedPossibility)
 		{
+			Rows = rows;
+			Columns = columns;
+			BlockedPossibility = blockedPossibility;
+
 			Canvas.Background = Background;
 			Canvas.Children.Clear();
 

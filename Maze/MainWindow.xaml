@@ -22,10 +22,30 @@
 
             <StackPanel Grid.Column="0" Orientation="Vertical">
                 <GroupBox Header="Parameters">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
 
+                        <Label Grid.Row="0" Grid.Column="0" Content="N = " HorizontalContentAlignment="Right"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Width="50" Text="{Binding N, Mode=TwoWay}"/>
+
+                        <Label Grid.Row="1" Grid.Column="0" Content="p = " HorizontalContentAlignment="Right"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Width="50" Text="{Binding P, Mode=TwoWay}"/>
+                    </Grid>
+
+                    
                 </GroupBox>
 
                 <WrapPanel Orientation="Vertical" HorizontalAlignment="Center">
+                    <Button Content="recreate maze" Click="RecreateMaze" ToolTip="Recreate the maze based on the given values of N and p"/>
                     <Button Content="A*" Click="SearchSolution" ToolTip="Solve the initial state using the A* algorithm"/>
                     <Button Content="stop" ToolTip="Stop the analysis while the A* is running"/>
                     <Button Content="clear logs" Click="ClearLogs" ToolTip="Clear the messages from the logs"/>
