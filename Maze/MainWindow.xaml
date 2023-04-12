@@ -5,15 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Maze"
         mc:Ignorable="d"
-        Title="Maze" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+        Title="Maze" Height="450" Width="800" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
 
 
     <DockPanel>
         <StatusBar DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
             <TextBlock Text="{Binding Message}"/>
         </StatusBar>
-
-        
 
         <Grid>
             <Grid.ColumnDefinitions>
@@ -28,7 +26,7 @@
                 </GroupBox>
 
                 <WrapPanel Orientation="Vertical" HorizontalAlignment="Center">
-                    <Button Content="A*" ToolTip="Solve the initial state using the A* algorithm"/>
+                    <Button Content="A*" Click="SearchSolution" ToolTip="Solve the initial state using the A* algorithm"/>
                     <Button Content="stop" ToolTip="Stop the analysis while the A* is running"/>
                     <Button Content="clear logs" Click="ClearLogs" ToolTip="Clear the messages from the logs"/>
                     <Button Content="exit" Click="ExitProgram" ToolTip="Close the application"/>
@@ -39,7 +37,7 @@
             
             <TabControl Grid.Column="2">
                 <TabItem Header="Maze">
-                    <Canvas Name="MazeCanvas"  Background="Yellow" MouseLeftButtonDown="CanvasClick"/>
+                    <Canvas Name="MazeCanvas" Margin="0" MouseLeftButtonDown="CanvasClick"/>
                 </TabItem>
                 <TabItem Header="Logs">
                     <ListBox ItemsSource="{Binding LogsView}"/>

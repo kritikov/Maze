@@ -45,6 +45,8 @@ namespace Maze
 			}
 		}
 
+		public MazeConstructor MazeConstructor { get; set; }
+
 		#endregion
 
 
@@ -56,6 +58,7 @@ namespace Maze
 
 			this.DataContext = this;
 			logsSource.Source = Logs.List;
+			MazeConstructor = new MazeConstructor(MazeCanvas);
 
 		}
 
@@ -91,10 +94,8 @@ namespace Maze
 
 			try
 			{
-				Point p = Mouse.GetPosition(MazeCanvas);
-				p.X += MazeCanvas.Margin.Left;
-				p.Y += MazeCanvas.Margin.Top;
-				Message = p.ToString();
+				Point point = Mouse.GetPosition(MazeCanvas);
+				SelectCell(point);
 			}
 			catch (Exception ex)
 			{
@@ -102,6 +103,15 @@ namespace Maze
 			}
 		}
 
+		private void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			this.MazeConstructor.Construct();
+		}
+
+		private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			MazeConstructor.Redraw();
+		}
 		#endregion
 
 
@@ -115,8 +125,27 @@ namespace Maze
 			Logs.Clear();
 		}
 
+		/// <summary>
+		/// Select the cell from a point in the maze
+		/// </summary>
+		/// <param name="point"></param>
+		private void SelectCell(Point point)
+		{
+			point.X += MazeCanvas.Margin.Left;
+			point.Y += MazeCanvas.Margin.Top;
+			Message = point.ToString();
+
+			MazeConstructor.RevertCellType((int)point.X, (int)point.Y);
+		}
+
+
 
 		#endregion
+
+		private void SearchSolution(object sender, RoutedEventArgs e)
+		{
+			
+		}
 
 		
 	}
