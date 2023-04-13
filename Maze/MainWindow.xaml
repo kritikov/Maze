@@ -3,11 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Converters="clr-namespace:Maze.Classes"
         xmlns:local="clr-namespace:Maze"
         mc:Ignorable="d"
         Title="Maze" Height="450" Width="800" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
 
-
+    <Window.Resources>
+        <Converters:BooleanReverse x:Key="BooleanReverse"/>
+    </Window.Resources>
+    
     <DockPanel>
         <StatusBar DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
             <TextBlock Text="{Binding Message}"/>
@@ -25,9 +29,10 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
@@ -35,21 +40,38 @@
                         </Grid.RowDefinitions>
 
                         <Label Grid.Row="0" Grid.Column="0" Content="N = " HorizontalContentAlignment="Right"/>
-                        <TextBox Grid.Row="0" Grid.Column="1" Width="50" Text="{Binding N, Mode=TwoWay}"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Width="50" Text="{Binding MazeConstructor.N, Mode=TwoWay}"/>
 
                         <Label Grid.Row="1" Grid.Column="0" Content="p = " HorizontalContentAlignment="Right"/>
-                        <TextBox Grid.Row="1" Grid.Column="1" Width="50" Text="{Binding P, Mode=TwoWay}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Width="50" Text="{Binding MazeConstructor.BlockedPossibility, Mode=TwoWay}"/>
+
+                        <Label Grid.Row="2" Grid.Column="0" Content="stretch maze" HorizontalContentAlignment="Right"/>
+                        <CheckBox Grid.Row="2" Grid.Column="1" Width="50" IsChecked="{Binding StretchCanvas}" HorizontalAlignment="Left" IsEnabled="False"
+                                  ToolTip="All cells of the maze will be displayed in the screen"/>
+
+                        <Label Grid.Row="3" Grid.Column="0" Content="cell dimension" HorizontalContentAlignment="Right"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Width="50" Text="{Binding MazeConstructor.FixedCellDimension}" IsEnabled="False"
+                                 ToolTip="The size of the cell when the maze is not streched to the screen size"/>
+
+                        <Label Grid.Row="4" Grid.Column="0" Content="edit cells" HorizontalContentAlignment="Right"/>
+                        <CheckBox Grid.Row="4" Grid.Column="1" Width="50" IsChecked="{Binding MazeConstructor.EditCells}" HorizontalAlignment="Left"
+                                  ToolTip="If checked, you can enable or disable cells with the mouse by clicking on them"/>
                     </Grid>
 
                     
                 </GroupBox>
 
                 <WrapPanel Orientation="Vertical" HorizontalAlignment="Center">
-                    <Button Content="recreate maze" Click="RecreateMaze" ToolTip="Recreate the maze based on the given values of N and p"/>
-                    <Button Content="A*" Click="SearchSolution" ToolTip="Solve the initial state using the A* algorithm"/>
-                    <Button Content="stop" ToolTip="Stop the analysis while the A* is running"/>
-                    <Button Content="clear logs" Click="ClearLogs" ToolTip="Clear the messages from the logs"/>
-                    <Button Content="exit" Click="ExitProgram" ToolTip="Close the application"/>
+                    <Button Content="recreate maze" Click="RecreateMaze" IsEnabled="{Binding AlgorithmIsRunning, Converter={StaticResource BooleanReverse}}"
+                            ToolTip="Recreate the maze based on the given values of N and p"/>
+                    <Button Content="A*" Click="SearchSolution"  IsEnabled="{Binding AlgorithmIsRunning, Converter={StaticResource BooleanReverse}}"
+                            ToolTip="Solve the initial state using the A* algorithm"/>
+                    <Button Content="stop" IsEnabled="{Binding AlgorithmIsRunning}"
+                            ToolTip="Stop the analysis while the A* is running"/>
+                    <Button Content="clear logs" Click="ClearLogs"  IsEnabled="{Binding AlgorithmIsRunning, Converter={StaticResource BooleanReverse}}"
+                            ToolTip="Clear the messages from the logs"/>
+                    <Button Content="exit" Click="ExitProgram"  IsEnabled="{Binding AlgorithmIsRunning, Converter={StaticResource BooleanReverse}}"
+                            ToolTip="Close the application"/>
                 </WrapPanel>
             </StackPanel>
 

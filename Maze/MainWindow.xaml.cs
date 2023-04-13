@@ -47,25 +47,25 @@ namespace Maze
 
 		public MazeConstructor MazeConstructor { get; set; }
 
-		private int n = 5;
-		public int N
+		private bool stretchCanvas = true;
+		public bool StretchCanvas
 		{
-			get { return n; }
+			get { return stretchCanvas; }
 			set
 			{
-				n = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("N"));
+				stretchCanvas = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StretchCanvas)));
 			}
 		}
 
-		private double p = 0.5;
-		public double P
+		private bool algorithmIsRunning = false;
+		public bool AlgorithmIsRunning
 		{
-			get { return p; }
+			get { return algorithmIsRunning; }
 			set
 			{
-				p = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("P"));
+				algorithmIsRunning = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AlgorithmIsRunning)));
 			}
 		}
 
@@ -117,7 +117,12 @@ namespace Maze
 			try
 			{
 				Point point = Mouse.GetPosition(MazeCanvas);
-				SelectCell(point);
+				var selectedSell = MazeConstructor.GetCell(point);
+
+				Message = $"cell position: {selectedSell.Row + 1}, {selectedSell.Column + 1}";
+
+				if (MazeConstructor.EditCells == true)
+					selectedSell.RevertType();
 			}
 			catch (Exception ex)
 			{
@@ -131,7 +136,10 @@ namespace Maze
 
 			try
 			{
-				this.MazeConstructor.Construct(N, N, P);
+				//MazeCanvas.Width = MazeScroller.ActualWidth - 17;
+				//MazeCanvas.Height = MazeScroller.ActualHeight - 17;
+
+				this.MazeConstructor.Construct();
 			}
 			catch (Exception ex)
 			{
@@ -160,7 +168,7 @@ namespace Maze
 
 			try
 			{
-				this.MazeConstructor.Construct(N, N, P);
+				this.MazeConstructor.Construct();
 			}
 			catch (Exception ex)
 			{
@@ -179,19 +187,6 @@ namespace Maze
 		private void ClearLogs()
 		{
 			Logs.Clear();
-		}
-
-		/// <summary>
-		/// Select the cell from a point in the maze
-		/// </summary>
-		/// <param name="point"></param>
-		private void SelectCell(Point point)
-		{
-			point.X += MazeCanvas.Margin.Left;
-			point.Y += MazeCanvas.Margin.Top;
-			Message = point.ToString();
-
-			MazeConstructor.RevertCellType((int)point.X, (int)point.Y);
 		}
 
 		private void SearchSolution(object sender, RoutedEventArgs e)

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Common;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -10,23 +12,73 @@ using System.Windows.Shapes;
 
 namespace Maze.Classes
 {
+	public enum DrawType
+	{
+		Stretch,
+		Fixed
+	}
 
-	public class MazeConstructor
+	public class MazeConstructor: INotifyPropertyChanged
 	{
 		#region VARIABLES AND NESTED CLASSES
 
+		public event PropertyChangedEventHandler PropertyChanged;
+
 		public int Rows = 5;
 		public int Columns = 5;
-		public double BlockedPossibility = 0.5;
+		public Cell[,] Cells;
 		public double Width => Canvas.ActualWidth;
-		public int CellWidth => (int)(Width / Columns);
 		public double Height => Canvas.ActualHeight;
+		public int CellWidth => (int)(Width / Columns);
 		public int CellHeight => (int)(Height / Rows);
 		public Brush Background = new SolidColorBrush(Colors.White);
 		public Canvas Canvas;
-		//public List<Cell> Cells = new List<Cell>();
 
-		public Cell[,] Cells;
+		private int n = 5;
+		public int N
+		{
+			get { return n; }
+			set
+			{
+				n = value;
+				Rows = n;
+				Columns = n;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(N)));
+			}
+		}
+
+		private double blockedPossibility = 0.2;
+		public double BlockedPossibility
+		{
+			get { return blockedPossibility; }
+			set
+			{
+				blockedPossibility = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BlockedPossibility)));
+			}
+		}
+
+		private int fixedCellDimension = 20;
+		public int FixedCellDimension
+		{
+			get { return fixedCellDimension; }
+			set
+			{
+				fixedCellDimension = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FixedCellDimension)));
+			}
+		}
+
+		private bool editCells = false;
+		public bool EditCells
+		{
+			get { return editCells; }
+			set
+			{
+				editCells = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EditCells)));
+			}
+		}
 
 		#endregion
 
@@ -37,7 +89,7 @@ namespace Maze.Classes
 		{
 			Canvas = canvas;
 		}
-		
+
 		#endregion
 
 
@@ -46,12 +98,8 @@ namespace Maze.Classes
 		/// <summary>
 		/// Create the maze. This is used only once and when we change the number of cells
 		/// </summary>
-		public void Construct(int rows, int columns, double blockedPossibility)
+		public void Construct()
 		{
-			Rows = rows;
-			Columns = columns;
-			BlockedPossibility = blockedPossibility;
-
 			Canvas.Background = Background;
 			Canvas.Children.Clear();
 
@@ -106,15 +154,13 @@ namespace Maze.Classes
 			}
 		}
 
-		public Cell GetCell(int posX, int posY)
+		public Cell GetCell(Point point)
 		{
 			try
 			{
-				int column = (int)(posX / CellWidth);
-				int row = (int)(posY / CellHeight);
-
+				int column = (int)(point.X / CellWidth);
+				int row = (int)(point.Y / CellHeight);
 				var cell = Cells[row, column];
-				cell.SetColor(Colors.AliceBlue);
 
 				return cell;
 			}
@@ -122,20 +168,6 @@ namespace Maze.Classes
 			{
 				throw ex;
 			}
-		}
-
-		public void RevertCellType(int posX, int posY)
-		{
-			Cell cell = GetCell(posX, posY);
-			cell.RevertType();
-		}
-
-
-
-		public void Set (int rows, int columns)
-		{
-			Rows = rows;
-			Columns = columns;
 		}
 
 		#endregion
