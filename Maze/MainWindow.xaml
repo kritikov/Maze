@@ -6,7 +6,7 @@
         xmlns:Converters="clr-namespace:Maze.Classes"
         xmlns:local="clr-namespace:Maze"
         mc:Ignorable="d"
-        Title="Maze" Height="450" Width="800" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
+        Title="Maze" Height="550" Width="800" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
 
     <Window.Resources>
         <Converters:BooleanReverse x:Key="BooleanReverse"/>
@@ -37,25 +37,51 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
 
                         <Label Grid.Row="0" Grid.Column="0" Content="N = " HorizontalContentAlignment="Right"/>
-                        <TextBox Grid.Row="0" Grid.Column="1" Width="50" Text="{Binding MazeConstructor.N, Mode=TwoWay}"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Width="50" Text="{Binding MazeConstructor.N, Mode=TwoWay}"
+                                 ToolTip="The dimensions of the maze, the value must be between 5 and 50"/>
 
                         <Label Grid.Row="1" Grid.Column="0" Content="p = " HorizontalContentAlignment="Right"/>
-                        <TextBox Grid.Row="1" Grid.Column="1" Width="50" Text="{Binding MazeConstructor.BlockedPossibility, Mode=TwoWay}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Width="50" Text="{Binding MazeConstructor.BlockedPossibility, Mode=TwoWay}"
+                                 ToolTip="The possibility of a cell to be blocked, the value must be between 0 and 1"/>
 
-                        <Label Grid.Row="2" Grid.Column="0" Content="stretch maze" HorizontalContentAlignment="Right"/>
-                        <CheckBox Grid.Row="2" Grid.Column="1" Width="50" IsChecked="{Binding StretchCanvas}" HorizontalAlignment="Left" IsEnabled="False"
+                        <Label Grid.Row="2" Grid.Column="0" Content="edit cells" HorizontalContentAlignment="Right"/>
+                        <CheckBox Grid.Row="2" Grid.Column="1" Width="50" IsChecked="{Binding MazeConstructor.EditCells}" HorizontalAlignment="Left"
+                                  ToolTip="If checked, you can enable or disable cells with the mouse by clicking on them"/>
+
+                        <Label Grid.Row="3" Grid.Column="0" Content="start cell" HorizontalContentAlignment="Right"/>
+                        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+                            <TextBox Width="20" Text="{Binding StartPosition.Row, Mode=TwoWay}"/>
+                            <TextBox Width="20" Text="{Binding StartPosition.Column, Mode=TwoWay}"/>
+                        </StackPanel>
+                        
+                        <Label Grid.Row="4" Grid.Column="0" Content="end cell 1" HorizontalContentAlignment="Right"/>
+                        <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
+                            <TextBox Width="20" Text="{Binding EndPosition1.Row, Mode=TwoWay}"/>
+                            <TextBox Width="20" Text="{Binding EndPosition1.Column, Mode=TwoWay}"/>
+                        </StackPanel>
+                        
+                        <Label Grid.Row="5" Grid.Column="0" Content="end cell 2" HorizontalContentAlignment="Right"/>
+                        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
+                            <TextBox Width="20" Text="{Binding EndPosition2.Row, Mode=TwoWay}"/>
+                            <TextBox Width="20" Text="{Binding EndPosition2.Column, Mode=TwoWay}"/>
+                        </StackPanel>
+                        
+
+                        
+                        <Label Grid.Row="6" Grid.Column="0" Content="stretch maze" HorizontalContentAlignment="Right"/>
+                        <CheckBox Grid.Row="6" Grid.Column="1" Width="50" IsChecked="{Binding StretchCanvas}" HorizontalAlignment="Left" IsEnabled="False"
                                   ToolTip="All cells of the maze will be displayed in the screen"/>
 
-                        <Label Grid.Row="3" Grid.Column="0" Content="cell dimension" HorizontalContentAlignment="Right"/>
-                        <TextBox Grid.Row="3" Grid.Column="1" Width="50" Text="{Binding MazeConstructor.FixedCellDimension}" IsEnabled="False"
+                        <Label Grid.Row="7" Grid.Column="0" Content="cell dimension" HorizontalContentAlignment="Right"/>
+                        <TextBox Grid.Row="7" Grid.Column="1" Width="50" Text="{Binding MazeConstructor.FixedCellDimension}" IsEnabled="False"
                                  ToolTip="The size of the cell when the maze is not streched to the screen size"/>
 
-                        <Label Grid.Row="4" Grid.Column="0" Content="edit cells" HorizontalContentAlignment="Right"/>
-                        <CheckBox Grid.Row="4" Grid.Column="1" Width="50" IsChecked="{Binding MazeConstructor.EditCells}" HorizontalAlignment="Left"
-                                  ToolTip="If checked, you can enable or disable cells with the mouse by clicking on them"/>
                     </Grid>
 
                     

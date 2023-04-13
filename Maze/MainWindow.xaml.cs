@@ -69,6 +69,10 @@ namespace Maze
 			}
 		}
 
+		public CellPosition StartPosition { get; set; } = new CellPosition();
+		public CellPosition EndPosition1 { get; set; } = new CellPosition();
+		public CellPosition EndPosition2 { get; set; } = new CellPosition();
+
 		#endregion
 
 
@@ -168,7 +172,22 @@ namespace Maze
 
 			try
 			{
+				ValidateParameters();
 				this.MazeConstructor.Construct();
+			}
+			catch (Exception ex)
+			{
+				Message = ex.Message;
+			}
+		}
+
+		private void SearchSolution(object sender, RoutedEventArgs e)
+		{
+			Message = "";
+
+			try
+			{
+				ValidateParameters();
 			}
 			catch (Exception ex)
 			{
@@ -189,8 +208,27 @@ namespace Maze
 			Logs.Clear();
 		}
 
-		private void SearchSolution(object sender, RoutedEventArgs e)
+		/// <summary>
+		/// Validate the parameters
+		/// </summary>
+		private void ValidateParameters()
 		{
+			Message = "";
+
+			try
+			{
+				if (MazeConstructor.N < 5 || MazeConstructor.N > 50)
+					throw new Exception("The dimension of the maze are out of limits, the N must be between 5 and 50");
+
+				if (MazeConstructor.BlockedPossibility < 0 || MazeConstructor.BlockedPossibility > 1)
+					throw new Exception("he possibility of a cell to be blocked is out of limits, the P must be between 0 and 1");
+
+
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
 
 		}
 
