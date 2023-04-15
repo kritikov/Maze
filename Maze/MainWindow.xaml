@@ -43,33 +43,36 @@
                         </Grid.RowDefinitions>
 
                         <Label Grid.Row="0" Grid.Column="0" Content="N = " HorizontalContentAlignment="Right"/>
-                        <TextBox Grid.Row="0" Grid.Column="1" Width="50" Text="{Binding MazeConstructor.N, Mode=TwoWay}"
+                        <TextBox Grid.Row="0" Grid.Column="1" Width="50" Text="{Binding Maze.N, Mode=TwoWay}"
                                  ToolTip="The dimensions of the maze, the value must be between 5 and 50"/>
 
                         <Label Grid.Row="1" Grid.Column="0" Content="p = " HorizontalContentAlignment="Right"/>
-                        <TextBox Grid.Row="1" Grid.Column="1" Width="50" Text="{Binding MazeConstructor.BlockedPossibility, Mode=TwoWay}"
+                        <TextBox Grid.Row="1" Grid.Column="1" Width="50" Text="{Binding Maze.BlockedPossibility, Mode=TwoWay}"
                                  ToolTip="The possibility of a cell to be blocked, the value must be between 0 and 1"/>
 
                         <Label Grid.Row="2" Grid.Column="0" Content="edit cells" HorizontalContentAlignment="Right"/>
-                        <CheckBox Grid.Row="2" Grid.Column="1" Width="50" IsChecked="{Binding MazeConstructor.EditCells}" HorizontalAlignment="Left"
-                                  ToolTip="If checked, you can enable or disable cells with the mouse by clicking on them"/>
+                        <CheckBox Grid.Row="2" Grid.Column="1" Width="50" IsChecked="{Binding Maze.EditCells}" HorizontalAlignment="Left"
+                                  ToolTip="Enable or disable cells with the mouse by clicking on them"/>
 
                         <Label Grid.Row="3" Grid.Column="0" Content="start cell" HorizontalContentAlignment="Right"/>
                         <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
-                            <TextBox Width="20" Text="{Binding StartPosition.Row, Mode=TwoWay}"/>
-                            <TextBox Width="20" Text="{Binding StartPosition.Column, Mode=TwoWay}"/>
+                            <TextBox Width="20" Text="{Binding StartPosition.Row, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="20" Text="{Binding StartPosition.Column, Mode=TwoWay}" IsEnabled="False"/>
+                            <Button Content="set" ToolTip="Set the start cell from the selected cell in the maze" Click="SelectStartCell"/>
                         </StackPanel>
                         
                         <Label Grid.Row="4" Grid.Column="0" Content="end cell 1" HorizontalContentAlignment="Right"/>
                         <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
-                            <TextBox Width="20" Text="{Binding EndPosition1.Row, Mode=TwoWay}"/>
-                            <TextBox Width="20" Text="{Binding EndPosition1.Column, Mode=TwoWay}"/>
+                            <TextBox Width="20" Text="{Binding EndPosition1.Row, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="20" Text="{Binding EndPosition1.Column, Mode=TwoWay}" IsEnabled="False"/>
+                            <Button Content="set" ToolTip="Set the end cell from the selected cell in the maze" Click="SelectEnd1Cell"/>
                         </StackPanel>
                         
                         <Label Grid.Row="5" Grid.Column="0" Content="end cell 2" HorizontalContentAlignment="Right"/>
                         <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
-                            <TextBox Width="20" Text="{Binding EndPosition2.Row, Mode=TwoWay}"/>
-                            <TextBox Width="20" Text="{Binding EndPosition2.Column, Mode=TwoWay}"/>
+                            <TextBox Width="20" Text="{Binding EndPosition2.Row, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="20" Text="{Binding EndPosition2.Column, Mode=TwoWay}" IsEnabled="False"/>
+                            <Button Content="set" ToolTip="Set the end cell from the selected cell in the maze" Click="SelectEnd2Cell"/>
                         </StackPanel>
                         
 
@@ -79,7 +82,7 @@
                                   ToolTip="All cells of the maze will be displayed in the screen"/>
 
                         <Label Grid.Row="7" Grid.Column="0" Content="cell dimension" HorizontalContentAlignment="Right"/>
-                        <TextBox Grid.Row="7" Grid.Column="1" Width="50" Text="{Binding MazeConstructor.FixedCellDimension}" IsEnabled="False"
+                        <TextBox Grid.Row="7" Grid.Column="1" Width="50" Text="{Binding Maze.FixedCellDimension}" IsEnabled="False"
                                  ToolTip="The size of the cell when the maze is not streched to the screen size"/>
 
                     </Grid>

@@ -11,45 +11,19 @@ namespace Maze.Classes
 		Free,
 		Blocked,
 		Start,
-		End
-	}
-
-	public class CellPosition : INotifyPropertyChanged
-	{
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		private int row = -1;
-		public int Row
-		{
-			get { return row; }
-			set
-			{
-				row = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Row)));
-			}
-		}
-
-		private int column = -1;
-		public int Column
-		{
-			get { return column; }
-			set
-			{
-				column = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Column)));
-			}
-		}
+		End1,
+		End2
 	}
 
 	public class Cell
 	{
-		public MazeConstructor Parent;
+		public Maze Parent;
 		public int Row = 0;
 		public int Column = 0;
 		public CellType Type = CellType.Free;
 		public Rectangle Rectangle = new Rectangle();
 
-		public Cell(MazeConstructor parent, int column, int row)
+		public Cell(Maze parent, int column, int row)
 		{
 			Parent = parent;
 			Column = column;
@@ -60,20 +34,29 @@ namespace Maze.Classes
 			Type = Parent.BlockedPossibility > blockedPossibility ? CellType.Blocked : CellType.Free;
 
 			SetRectangle();
-		}
+
+            Parent.Cells[row, column] = this;
+            Parent.Canvas.Children.Add(this.Rectangle);
+        }
 
 		/// <summary>
 		/// Set the sizes of the rectangle based on the current sizes of the screen
 		/// </summary>
 		public void SetRectangle()
 		{
-			Rectangle.Stroke = new SolidColorBrush(Colors.Black);
 			Rectangle.StrokeThickness = 1;
+			SetBorder(Colors.Black);
 
-			if (Type == CellType.Free)
+            if (Type == CellType.Free)
 				Rectangle.Fill = new SolidColorBrush(Colors.White);
-			else
-				Rectangle.Fill = new SolidColorBrush(Colors.DarkBlue);
+			else if (Type == CellType.Blocked)
+                Rectangle.Fill = new SolidColorBrush(Colors.DarkBlue);
+			else if (Type == CellType.Start)
+                Rectangle.Fill = new SolidColorBrush(Colors.Bisque);
+			else if (Type == CellType.End1)
+                Rectangle.Fill = new SolidColorBrush(Colors.GreenYellow);
+			else if (Type == CellType.End2)
+                Rectangle.Fill = new SolidColorBrush(Colors.YellowGreen);
 
 			Rectangle.Width = Parent.CellWidth;
 			Rectangle.Height = Parent.CellHeight;
@@ -94,17 +77,9 @@ namespace Maze.Classes
 		}
 
 		/// <summary>
-		/// Redraw the cell in the screen with the current sizes
-		/// </summary>
-		public void Redraw()
-		{
-			SetRectangle();
-		}
-
-		/// <summary>
 		/// Revert the type cell from bloked to unblocked and vice versa
 		/// </summary>
-		public void RevertType()
+		public void RevertBlocked()
 		{
 			if (Type == CellType.Free)
 			{
@@ -126,5 +101,14 @@ namespace Maze.Classes
 		{
 			Rectangle.Fill = new SolidColorBrush(color);
 		}
-	}
+
+		/// <summary>
+		/// Set the color of the border
+		/// </summary>
+		/// <param name="color"></param>
+        public void SetBorder(Color color)
+        {
+            Rectangle.Stroke = new SolidColorBrush(color);
+        }
+    }
 }

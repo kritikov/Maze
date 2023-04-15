@@ -18,10 +18,38 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Maze
 {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window, INotifyPropertyChanged
+    public class CellPosition : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private int row = -1;
+        public int Row
+        {
+            get { return row; }
+            set
+            {
+                row = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Row)));
+            }
+        }
+
+        private int column = -1;
+        public int Column
+        {
+            get { return column; }
+            set
+            {
+                column = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Column)));
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window, INotifyPropertyChanged
 	{
 		#region VARIABLES AND NESTED CLASSES
 
@@ -45,7 +73,7 @@ namespace Maze
 			}
 		}
 
-		public MazeConstructor MazeConstructor { get; set; }
+		public Classes.Maze Maze { get; set; }
 
 		private bool stretchCanvas = true;
 		public bool StretchCanvas
@@ -84,7 +112,7 @@ namespace Maze
 
 			this.DataContext = this;
 			logsSource.Source = Logs.List;
-			MazeConstructor = new MazeConstructor(MazeCanvas);
+            Maze = new Classes.Maze(MazeCanvas);
 
 		}
 
@@ -121,12 +149,13 @@ namespace Maze
 			try
 			{
 				Point point = Mouse.GetPosition(MazeCanvas);
-				var selectedSell = MazeConstructor.GetCell(point);
+				var selectedSell = Maze.GetCell(point);
+				Maze.SelectCell(selectedSell);
 
-				Message = $"cell position: {selectedSell.Row + 1}, {selectedSell.Column + 1}";
+                Message = $"cell position: {selectedSell.Row + 1}, {selectedSell.Column + 1}";
 
-				if (MazeConstructor.EditCells == true)
-					selectedSell.RevertType();
+				if (Maze.EditCells == true)
+					selectedSell.RevertBlocked();
 			}
 			catch (Exception ex)
 			{
@@ -143,7 +172,7 @@ namespace Maze
 				//MazeCanvas.Width = MazeScroller.ActualWidth - 17;
 				//MazeCanvas.Height = MazeScroller.ActualHeight - 17;
 
-				this.MazeConstructor.Construct();
+				this.Maze.Construct();
 			}
 			catch (Exception ex)
 			{
@@ -157,8 +186,8 @@ namespace Maze
 
 			try
 			{
-				if (MazeConstructor.Cells != null)
-					MazeConstructor.Redraw();
+				if (Maze.Cells != null)
+					Maze.Redraw();
 			}
 			catch (Exception ex)
 			{
@@ -173,7 +202,7 @@ namespace Maze
 			try
 			{
 				ValidateParameters();
-				this.MazeConstructor.Construct();
+				this.Maze.Construct();
 			}
 			catch (Exception ex)
 			{
@@ -195,6 +224,49 @@ namespace Maze
 			}
 		}
 
+        private void SelectStartCell(object sender, RoutedEventArgs e)
+        {
+            Message = "";
+
+            try
+			{
+				SelectStartCell();
+			}
+			catch (Exception ex)
+            {
+                Message = ex.Message;
+            }
+        }
+
+		private void SelectEnd1Cell(object sender, RoutedEventArgs e)
+        {
+            Message = "";
+
+            try
+			{
+				SelectEnd1Cell();
+			}
+			catch (Exception ex)
+            {
+                Message = ex.Message;
+            }
+        }
+		
+		private void SelectEnd2Cell(object sender, RoutedEventArgs e)
+        {
+            Message = "";
+
+            try
+			{
+				SelectEnd2Cell();
+			}
+			catch (Exception ex)
+            {
+                Message = ex.Message;
+            }
+        }
+
+		
 		#endregion
 
 
@@ -217,10 +289,10 @@ namespace Maze
 
 			try
 			{
-				if (MazeConstructor.N < 5 || MazeConstructor.N > 50)
+				if (Maze.N < 5 || Maze.N > 50)
 					throw new Exception("The dimension of the maze are out of limits, the N must be between 5 and 50");
 
-				if (MazeConstructor.BlockedPossibility < 0 || MazeConstructor.BlockedPossibility > 1)
+				if (Maze.BlockedPossibility < 0 || Maze.BlockedPossibility > 1)
 					throw new Exception("he possibility of a cell to be blocked is out of limits, the P must be between 0 and 1");
 
 
@@ -232,8 +304,60 @@ namespace Maze
 
 		}
 
-		#endregion
+		/// <summary>
+		/// Select the start position
+		/// </summary>
+		/// <exception cref="Exception"></exception>
+        private void SelectStartCell()
+        {
+            if (Maze.SelectedCell != null && Maze.SelectedCell.Type == CellType.Free)
+            {
+                this.StartPosition.Row = (int)Maze.SelectedCell?.Row;
+                this.StartPosition.Column = (int)Maze.SelectedCell?.Column;
+                Maze.SelectStartCell(Maze.SelectedCell);
+            }
+            else
+            {
+                throw new Exception("Select a valid cell");
+            }
+        }
 
-		
-	}
+        /// <summary>
+        /// Select the end 1 position
+        /// </summary>
+        /// <exception cref="Exception"></exception>
+        private void SelectEnd1Cell()
+        {
+            if (Maze.SelectedCell != null && Maze.SelectedCell.Type == CellType.Free)
+            {
+                this.EndPosition1.Row = (int)Maze.SelectedCell?.Row;
+                this.EndPosition1.Column = (int)Maze.SelectedCell?.Column;
+                Maze.SelectEnd1Cell(Maze.SelectedCell);
+            }
+            else
+            {
+                throw new Exception("Select a valid cell");
+            }
+        }
+
+        /// <summary>
+        /// Select the end 2 position
+        /// </summary>
+        /// <exception cref="Exception"></exception>
+        private void SelectEnd2Cell()
+        {
+            if (Maze.SelectedCell != null && Maze.SelectedCell.Type == CellType.Free)
+            {
+                this.EndPosition2.Row = (int)Maze.SelectedCell?.Row;
+                this.EndPosition2.Column = (int)Maze.SelectedCell?.Column;
+                Maze.SelectEnd2Cell(Maze.SelectedCell);
+            }
+            else
+            {
+                throw new Exception("Select a valid cell");
+            }
+        }
+
+        #endregion
+    }
 }
