@@ -17,8 +17,9 @@ namespace Maze.Classes
 		public double g = 0;
 		public double h = 0;
 		public double Weight = 0;
-		public int Row;
-		public int Column;
+		public Cell Cell;
+		public Cell Destination;
+
 		public string DisplayValue
 		{
 			get { return this.ToString(); }
@@ -32,10 +33,10 @@ namespace Maze.Classes
 		{
 		}
 
-		public State(int startRow, int startColumn)
+		public State(Cell cell, Cell destinationCell)
 		{
-			Row = startRow;
-			Column = startColumn;
+			Cell = cell;
+			Destination = destinationCell;
 		}
 
 		#endregion
@@ -45,8 +46,20 @@ namespace Maze.Classes
 
 		public override string ToString()
 		{
-			string result = $"Position = ({Row}, {Column})";
+			string result = $"Position = ({Cell.Row}, {Cell.Column})";
 			return result;
+		}
+
+		/// <summary>
+		/// Returns true if the state is final
+		/// </summary>
+		/// <returns></returns>
+		public bool IsFinal()
+		{
+			if (Cell == Destination)
+				return true;
+			else
+				return false;
 		}
 
 		/// <summary>
@@ -57,9 +70,10 @@ namespace Maze.Classes
 		{
 			State? parent = this.Parent;
 
+			// TODO: search by CurrentCell
 			while (parent != null)
 			{
-				if (parent.Row == this.Row && parent.Column == this.Column)
+				if (parent.Cell.Row == this.Cell.Row && parent.Cell.Column == this.Cell.Column)
 					return false;
 
 				parent = parent.Parent;
@@ -96,16 +110,28 @@ namespace Maze.Classes
 		/// </summary>
 		/// <param name="splitIndex"></param>
 		/// <returns></returns>
-		public State GetChild(int row, int column, double cost)
+		public State GetChild(Cell cell, double cost)
 		{
 			State childState = new State();
 			childState.Parent = this;
-			childState.Row = row;
-			childState.Column = column;
+			childState.Cell = cell;
+			childState.Destination = Destination;
 			childState.Weight = cost;
 			childState.g = this.g + cost;
 
 			return childState;
+		}
+
+		/// <summary>
+		/// Evaluate the state using the heuristic function
+		/// </summary>
+		public void Evaluate()
+		{
+			if (Parent != null)
+				g = Parent.g + Weight;
+
+			h = HeuristicDistance(Cell.Row, Cell.Column, Destination.Row, Destination.Column);
+			f = g + h;
 		}
 
 		/// <summary>
@@ -132,17 +158,7 @@ namespace Maze.Classes
 
 			try
 			{
-				if (states.Count == 0)
-					return null;
-				else
-				{
-					bestState = states[0];
-					foreach (var state in states)
-					{
-						if (state.f < bestState.f)
-							bestState = state;
-					}
-				}
+				bestState = states.MinBy(p => p.f);
 			}
 			catch (Exception ex)
 			{
@@ -155,7 +171,7 @@ namespace Maze.Classes
 		/// <summary>
 		/// Analyze a state using the A* algorithm
 		/// </summary>
-		public static ObservableCollection<string> ASTARAnalysis(State initialState, Maze maze, int endRow, int endColumn, CancellationToken cancellationToken)
+		public static ObservableCollection<string> ASTARAnalysis(State initialState, CancellationToken cancellationToken)
 		{
 			ObservableCollection<string> results = new ObservableCollection<string>();
 			var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -173,35 +189,29 @@ namespace Maze.Classes
 				Logs.Write($"Initial state: {initialState.DisplayValue} with g={initialState.g}, h={initialState.h}, f={initialState.f}");
 
 				// if the initial state is the same as the destination then is the state we search
-				if (initialState.Row == endRow && initialState.Column == endColumn)
+				if (initialState.IsFinal())
 					finalState = initialState;
 
 				// evaluate the initial state
-				initialState.g = initialState.Weight;
-				initialState.h = HeuristicDistance(initialState.Row, initialState.Column, endRow, endColumn);
-				initialState.f = initialState.g;
+				initialState.Evaluate();
 
 				while (finalState == null && openStates.Count != 0)
 				{
 					// stop the process if the user has cancel it
 					cancellationToken.ThrowIfCancellationRequested();
 
-					// open the childs of the selected state
-
-					// left move child
-					var rightCell = maze.GetCell(selectedState.Row, selectedState.Column + 1);
-					if (rightCell != null && rightCell.Type != CellType.Blocked)
+					// get child state when moving right
+					var rightCell = selectedState.Cell.GetSibling(Direction.Right);
+					if (rightCell != null)
 					{
 						// create the child state with the proper cost
-						State childState = selectedState.GetChild(rightCell.Row, rightCell.Column, 0.5);
+						State childState = selectedState.GetChild(rightCell, 0.5);
 
 						// if the child hasnt appears before in its anchestors then use it
 						if (childState.IsUniqueDescendant())
 						{
 							// evaluate child
-							childState.g = childState.Parent.g + childState.Weight;
-							childState.h = HeuristicDistance(childState.Row, childState.Column, endRow, endColumn);
-							childState.f = childState.g + childState.h;
+							childState.Evaluate();
 
 							// add it to list with the opened states
 							openStates.Add(childState);
@@ -210,20 +220,18 @@ namespace Maze.Classes
 						}
 					}
 
-					// down move child
-					var downCell = maze.GetCell(selectedState.Row+1, selectedState.Column);
-					if (downCell != null && downCell.Type != CellType.Blocked)
+					// get child state when moving down
+					var downCell = selectedState.Cell.GetSibling(Direction.Down);
+					if (downCell != null)
 					{
 						// create the child state with the proper cost
-						State childState = selectedState.GetChild(downCell.Row, downCell.Column, 1);
+						State childState = selectedState.GetChild(downCell, 1);
 
 						// if the child hasnt appears before in its anchestors then use it
 						if (childState.IsUniqueDescendant())
 						{
 							// evaluate child
-							childState.g = childState.Parent.g + childState.Weight;
-							childState.h = HeuristicDistance(childState.Row, childState.Column, endRow, endColumn);
-							childState.f = childState.g + childState.h;
+							childState.Evaluate();
 
 							// add it to list with the opened states
 							openStates.Add(childState);
@@ -232,20 +240,18 @@ namespace Maze.Classes
 						}
 					}
 
-					// left move child
-					var leftCell = maze.GetCell(selectedState.Row, selectedState.Column - 1);
-					if (leftCell != null && leftCell.Type != CellType.Blocked)
+					// get child state when moving left
+					var leftCell = selectedState.Cell.GetSibling(Direction.Left);
+					if (leftCell != null)
 					{
 						// create the child state with the proper cost
-						State childState = selectedState.GetChild(leftCell.Row, leftCell.Column, 0.5);
+						State childState = selectedState.GetChild(leftCell, 0.5);
 
 						// if the child hasnt appears before in its anchestors then use it
 						if (childState.IsUniqueDescendant())
 						{
 							// evaluate child
-							childState.g = childState.Parent.g + childState.Weight;
-							childState.h = HeuristicDistance(childState.Row, childState.Column, endRow, endColumn);
-							childState.f = childState.g + childState.h;
+							childState.Evaluate();
 
 							// add it to list with the opened states
 							openStates.Add(childState);
@@ -254,20 +260,18 @@ namespace Maze.Classes
 						}
 					}
 
-					// up move child
-					var upCell = maze.GetCell(selectedState.Row - 1, selectedState.Column);
-					if (upCell != null && upCell.Type != CellType.Blocked)
+					// get child state when moving up
+					var upCell = selectedState.Cell.GetSibling(Direction.Up);
+					if (upCell != null)
 					{
 						// create the child state with the proper cost
-						State childState = selectedState.GetChild(upCell.Row, upCell.Column, 1);
+						State childState = selectedState.GetChild(upCell, 1);
 
 						// if the child hasnt appears before in its anchestors then use it
 						if (childState.IsUniqueDescendant())
 						{
 							// evaluate child
-							childState.g = childState.Parent.g + childState.Weight;
-							childState.h = HeuristicDistance(childState.Row, childState.Column, endRow, endColumn);
-							childState.f = childState.g + childState.h;
+							childState.Evaluate();
 
 							// add it to list with the opened states
 							openStates.Add(childState);
@@ -295,7 +299,7 @@ namespace Maze.Classes
 					Logs.Write($"new selected state {selectedState?.DisplayValue} with g={selectedState?.g}, h={selectedState?.h}, f={selectedState?.f}");
 
 					// check if the selected state is what we are searching for
-					if (selectedState.Row == endRow && selectedState.Column == endColumn)
+					if (selectedState.IsFinal())
 					{
 						finalState = selectedState;
 						Logs.Write($"found final state {finalState?.DisplayValue} with g={finalState?.g}, h={finalState?.h}, f={finalState?.f}");
@@ -322,16 +326,14 @@ namespace Maze.Classes
 						else
 							results.Add($"move at state {state?.DisplayValue} with g={state?.g}, h={state?.h}, f={state?.f}");
 					}
-
-					// write the results in the log
 				}
 				else
 				{
 					results.Add($"No final state found");
-
 				}
 
-				foreach(var message in results)
+				// write the results in the log
+				foreach (var message in results)
 				{
 					Logs.Write(message);
 				}
@@ -348,6 +350,7 @@ namespace Maze.Classes
 			}
 		}
 
+	
 		#endregion
 	}
 

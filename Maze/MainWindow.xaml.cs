@@ -361,10 +361,14 @@ namespace Maze
 						Logs.Clear();
 					});
 
-					var endCell = Maze.End1Cell;
-					State initialState = new State(Maze.StartCell.Row, Maze.StartCell.Column);
+					// TODO: temporary search manually in the the first end
+					if (Maze.StartCell != null && Maze.End1Cell != null)
+					{
 
-					Results = State.ASTARAnalysis(initialState, Maze, endCell.Row, endCell.Column, cancellationToken.Token);
+						State initialState = new State(Maze.StartCell, Maze.End1Cell);
+						Results = State.ASTARAnalysis(initialState, cancellationToken.Token);
+
+					}
 				});
 			}
 			catch (Exception ex)
