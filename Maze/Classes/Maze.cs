@@ -12,17 +12,14 @@ using System.Windows.Shapes;
 
 namespace Maze.Classes
 {
-	public enum DrawType
-	{
-		Stretch,
-		Fixed
-	}
-
 	public class Maze: INotifyPropertyChanged
 	{
 		#region VARIABLES AND NESTED CLASSES
 
 		public event PropertyChangedEventHandler PropertyChanged;
+
+		private Brush Background = new SolidColorBrush(Colors.White);
+		private Canvas Canvas;
 
 		public int Rows = 5;
 		public int Columns = 5;
@@ -31,8 +28,6 @@ namespace Maze.Classes
 		public double Height => Canvas.ActualHeight;
 		public int CellWidth => (int)(Width / Columns);
 		public int CellHeight => (int)(Height / Rows);
-		public Brush Background = new SolidColorBrush(Colors.White);
-		public Canvas Canvas;
 
 		private int n = 5;
 		public int N
@@ -55,17 +50,6 @@ namespace Maze.Classes
 			{
 				blockedPossibility = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BlockedPossibility)));
-			}
-		}
-
-		private int fixedCellDimension = 20;
-		public int FixedCellDimension
-		{
-			get { return fixedCellDimension; }
-			set
-			{
-				fixedCellDimension = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FixedCellDimension)));
 			}
 		}
 
@@ -142,6 +126,10 @@ namespace Maze.Classes
 		{
 			Canvas.Background = Background;
 			Canvas.Children.Clear();
+			SelectedCell = null;
+			StartCell = null;
+			End1Cell = null;
+			End2Cell = null;
 
 			CreateCells();
 		}
@@ -176,6 +164,9 @@ namespace Maze.Classes
 					return;
 
 				Cell cell = new Cell(this, column, row);
+
+				Cells[row, column] = cell;
+				Canvas.Children.Add(cell.Rectangle);
 			}
 			catch (Exception ex)
 			{
@@ -285,6 +276,19 @@ namespace Maze.Classes
             End2Cell?.SetColor(Colors.YellowGreen);
             End2Cell.Type = CellType.End2;
         }
+
+		/// <summary>
+		/// The euritic function that calculates the cost between two cells
+		/// </summary>
+		/// <param name="startCell"></param>
+		/// <param name="endCell"></param>
+		/// <returns></returns>
+		public double H(Cell startCell, Cell endCell)
+		{
+			double h = (endCell.Column - startCell.Column) * 0.5 + (endCell.Row - startCell.Row) * 1;
+
+			return h;
+		}
 
         #endregion
     }

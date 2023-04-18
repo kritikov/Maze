@@ -20,7 +20,6 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"/>
-                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
@@ -32,8 +31,6 @@
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
@@ -74,20 +71,8 @@
                             <TextBox Width="20" Text="{Binding EndPosition2.Column, Mode=TwoWay}" IsEnabled="False"/>
                             <Button Content="set" ToolTip="Set the end cell from the selected cell in the maze" Click="SelectEnd2Cell"/>
                         </StackPanel>
-                        
-
-                        
-                        <Label Grid.Row="6" Grid.Column="0" Content="stretch maze" HorizontalContentAlignment="Right"/>
-                        <CheckBox Grid.Row="6" Grid.Column="1" Width="50" IsChecked="{Binding StretchCanvas}" HorizontalAlignment="Left" IsEnabled="False"
-                                  ToolTip="All cells of the maze will be displayed in the screen"/>
-
-                        <Label Grid.Row="7" Grid.Column="0" Content="cell dimension" HorizontalContentAlignment="Right"/>
-                        <TextBox Grid.Row="7" Grid.Column="1" Width="50" Text="{Binding Maze.FixedCellDimension}" IsEnabled="False"
-                                 ToolTip="The size of the cell when the maze is not streched to the screen size"/>
 
                     </Grid>
-
-                    
                 </GroupBox>
 
                 <WrapPanel Orientation="Vertical" HorizontalAlignment="Center">
@@ -104,9 +89,7 @@
                 </WrapPanel>
             </StackPanel>
 
-            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"/>
-            
-            <TabControl Grid.Column="2">
+            <TabControl Grid.Column="1">
                 <TabItem Header="Maze">
                     <Canvas Name="MazeCanvas" Margin="0" MouseLeftButtonDown="CanvasClick"/>
                 </TabItem>

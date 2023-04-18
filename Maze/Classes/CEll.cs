@@ -34,9 +34,6 @@ namespace Maze.Classes
 			Type = Parent.BlockedPossibility > blockedPossibility ? CellType.Blocked : CellType.Free;
 
 			SetRectangle();
-
-            Parent.Cells[row, column] = this;
-            Parent.Canvas.Children.Add(this.Rectangle);
         }
 
 		/// <summary>

@@ -18,33 +18,6 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Maze
 {
-    public class CellPosition : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private int row = -1;
-        public int Row
-        {
-            get { return row; }
-            set
-            {
-                row = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Row)));
-            }
-        }
-
-        private int column = -1;
-        public int Column
-        {
-            get { return column; }
-            set
-            {
-                column = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Column)));
-            }
-        }
-    }
-
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -97,9 +70,9 @@ namespace Maze
 			}
 		}
 
-		public CellPosition StartPosition { get; set; } = new CellPosition();
-		public CellPosition EndPosition1 { get; set; } = new CellPosition();
-		public CellPosition EndPosition2 { get; set; } = new CellPosition();
+		public Position StartPosition { get; set; } = new Position();
+		public Position EndPosition1 { get; set; } = new Position();
+		public Position EndPosition2 { get; set; } = new Position();
 
 		#endregion
 
@@ -153,6 +126,12 @@ namespace Maze
 				Maze.SelectCell(selectedSell);
 
                 Message = $"cell position: {selectedSell.Row + 1}, {selectedSell.Column + 1}";
+
+				if (Maze.StartCell != null)
+				{
+					double h = Maze.H(Maze.StartCell, selectedSell);
+					Message += $", euristic distance to selected cell: {h}";
+				}
 
 				if (Maze.EditCells == true)
 					selectedSell.RevertBlocked();
