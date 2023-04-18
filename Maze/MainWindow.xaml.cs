@@ -1,9 +1,11 @@
 ﻿using Maze.Classes;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,7 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static System.Net.Mime.MediaTypeNames;
+//using static System.Net.Mime.MediaTypeNames;
 
 namespace Maze
 {
@@ -74,6 +76,8 @@ namespace Maze
 		public Position EndPosition1 { get; set; } = new Position();
 		public Position EndPosition2 { get; set; } = new Position();
 
+		private CancellationTokenSource cancellationToken = new CancellationTokenSource();
+		public ObservableCollection<string> Results { get; set; } = new ObservableCollection<string>();
 		#endregion
 
 
@@ -129,7 +133,7 @@ namespace Maze
 
 				if (Maze.StartCell != null)
 				{
-					double h = Maze.H(Maze.StartCell, selectedSell);
+					double h = Maze.HeuristicDistance(Maze.StartCell, selectedSell);
 					Message += $", euristic distance to selected cell: {h}";
 				}
 
@@ -189,16 +193,19 @@ namespace Maze
 			}
 		}
 
-		private void SearchSolution(object sender, RoutedEventArgs e)
+		private void ASTARRun(object sender, RoutedEventArgs e)
 		{
 			Message = "";
 
 			try
 			{
-				ValidateParameters();
+				AlgorithmIsRunning = true;
+
+				ASTARAnalysis();
 			}
 			catch (Exception ex)
 			{
+				Logs.Write(ex.Message);
 				Message = ex.Message;
 			}
 		}
@@ -337,6 +344,43 @@ namespace Maze
             }
         }
 
-        #endregion
-    }
+		/// <summary>
+		/// Solve the initial state using the A* algorithm
+		/// </summary>
+		/// <returns></returns>
+		private async Task ASTARAnalysis()
+		{
+			try
+			{
+				cancellationToken = new CancellationTokenSource();
+
+				await Task.Run(() =>
+				{
+					Application.Current.Dispatcher.Invoke(() =>
+					{
+						Logs.Clear();
+					});
+
+					var endCell = Maze.End1Cell;
+					State initialState = new State(Maze.StartCell.Row, Maze.StartCell.Column);
+
+					Results = State.ASTARAnalysis(initialState, Maze, endCell.Row, endCell.Column, cancellationToken.Token);
+				});
+			}
+			catch (Exception ex)
+			{
+				Logs.Write(ex.Message);
+				Message = ex.Message;
+			}
+			finally
+			{
+				Application.Current.Dispatcher.Invoke(() =>
+				{
+					AlgorithmIsRunning = false;
+					CommandManager.InvalidateRequerySuggested();
+				});
+			}
+		}
+		#endregion
+	}
 }

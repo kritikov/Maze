@@ -78,7 +78,7 @@
                 <WrapPanel Orientation="Vertical" HorizontalAlignment="Center">
                     <Button Content="recreate maze" Click="RecreateMaze" IsEnabled="{Binding AlgorithmIsRunning, Converter={StaticResource BooleanReverse}}"
                             ToolTip="Recreate the maze based on the given values of N and p"/>
-                    <Button Content="A*" Click="SearchSolution"  IsEnabled="{Binding AlgorithmIsRunning, Converter={StaticResource BooleanReverse}}"
+                    <Button Content="A*" Click="ASTARRun"  IsEnabled="{Binding AlgorithmIsRunning, Converter={StaticResource BooleanReverse}}"
                             ToolTip="Solve the initial state using the A* algorithm"/>
                     <Button Content="stop" IsEnabled="{Binding AlgorithmIsRunning}"
                             ToolTip="Stop the analysis while the A* is running"/>

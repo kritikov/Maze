@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Common;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -210,6 +212,26 @@ namespace Maze.Classes
 		}
 
 		/// <summary>
+		/// Get the cell by a specific point
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
+		public Cell? GetCell(int row, int column)
+		{
+			try
+			{
+				if (row < this.Rows && column < this.Columns && row >= 0 && column >= 0)
+					return Cells[row, column];
+				else
+					return null;
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+		}
+
+		/// <summary>
 		/// Select a cell and change its border color as to have focus
 		/// </summary>
 		/// <param name="cell"></param>
@@ -283,13 +305,12 @@ namespace Maze.Classes
 		/// <param name="startCell"></param>
 		/// <param name="endCell"></param>
 		/// <returns></returns>
-		public double H(Cell startCell, Cell endCell)
+		public double HeuristicDistance(Cell startCell, Cell endCell)
 		{
-			double h = (endCell.Column - startCell.Column) * 0.5 + (endCell.Row - startCell.Row) * 1;
+			double h = Math.Abs(endCell.Column - startCell.Column) * 0.5 + Math.Abs(endCell.Row - startCell.Row) * 1;
 
 			return h;
 		}
-
-        #endregion
-    }
+		#endregion
+	}
 }
