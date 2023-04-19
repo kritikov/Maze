@@ -26,11 +26,34 @@ namespace Maze.Classes
 		Down
 	}
 
-	public class Cell
+	public class Cell : INotifyPropertyChanged
 	{
+		public event PropertyChangedEventHandler PropertyChanged;
+
 		public Maze Maze;
-		public int Row = 0;
-		public int Column = 0;
+
+		private int row = -1;
+		public int Row
+		{
+			get { return row; }
+			set
+			{
+				row = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Row)));
+			}
+		}
+
+		private int column = 0-1;
+		public int Column
+		{
+			get { return column; }
+			set
+			{
+				column = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Column)));
+			}
+		}
+
 		public CellType Type = CellType.Free;
 		public Rectangle Rectangle = new Rectangle();
 

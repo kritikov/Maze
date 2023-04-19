@@ -81,10 +81,6 @@ namespace Maze
 			}
 		}
 
-		public Position StartPosition { get; set; } = new Position();
-		public Position EndPosition1 { get; set; } = new Position();
-		public Position EndPosition2 { get; set; } = new Position();
-
 		private CancellationTokenSource cancellationToken = new CancellationTokenSource();
 
 		public List<string> Results { get; set; } = new List<string>();
@@ -142,7 +138,7 @@ namespace Maze
 				var selectedSell = Maze.GetCell(point);
 				Maze.SelectCell(selectedSell);
 
-                Message = $"cell position: {selectedSell.Row + 1}, {selectedSell.Column + 1}";
+                Message = $"cell position: {selectedSell.Row}, {selectedSell.Column}";
 
 				if (Maze.StartCell != null)
 				{
@@ -197,13 +193,6 @@ namespace Maze
 
 			try
 			{
-				StartPosition.Row = -1; 
-				StartPosition.Column = -1;
-				EndPosition1.Row = -1;
-				EndPosition1.Column = -1; 
-				EndPosition2.Row = -1;
-				EndPosition2.Column = -1; 
-
 				Maze.Construct();
 			}
 			catch (Exception ex)
@@ -333,52 +322,34 @@ namespace Maze
         private void SelectStartCell()
         {
             if (Maze.SelectedCell != null && Maze.SelectedCell.Type == CellType.Free)
-            {
-                this.StartPosition.Row = (int)Maze.SelectedCell?.Row;
-                this.StartPosition.Column = (int)Maze.SelectedCell?.Column;
-                Maze.SelectStartCell(Maze.SelectedCell);
-            }
-            else
-            {
-                throw new Exception("Select a valid cell");
-            }
-        }
+				Maze.SelectStartCell(Maze.SelectedCell);
+			else
+				throw new Exception("Select a valid cell");
+		}
 
-        /// <summary>
-        /// Select the end 1 position
-        /// </summary>
-        /// <exception cref="Exception"></exception>
-        private void SelectEnd1Cell()
+		/// <summary>
+		/// Select the end 1 position
+		/// </summary>
+		/// <exception cref="Exception"></exception>
+		private void SelectEnd1Cell()
         {
             if (Maze.SelectedCell != null && Maze.SelectedCell.Type == CellType.Free)
-            {
-                this.EndPosition1.Row = (int)Maze.SelectedCell?.Row;
-                this.EndPosition1.Column = (int)Maze.SelectedCell?.Column;
-                Maze.SelectEnd1Cell(Maze.SelectedCell);
-            }
-            else
-            {
-                throw new Exception("Select a valid cell");
-            }
-        }
+				Maze.SelectEnd1Cell(Maze.SelectedCell);
+			else
+				throw new Exception("Select a valid cell");
+		}
 
-        /// <summary>
-        /// Select the end 2 position
-        /// </summary>
-        /// <exception cref="Exception"></exception>
-        private void SelectEnd2Cell()
+		/// <summary>
+		/// Select the end 2 position
+		/// </summary>
+		/// <exception cref="Exception"></exception>
+		private void SelectEnd2Cell()
         {
             if (Maze.SelectedCell != null && Maze.SelectedCell.Type == CellType.Free)
-            {
-                this.EndPosition2.Row = (int)Maze.SelectedCell?.Row;
-                this.EndPosition2.Column = (int)Maze.SelectedCell?.Column;
-                Maze.SelectEnd2Cell(Maze.SelectedCell);
-            }
-            else
-            {
-                throw new Exception("Select a valid cell");
-            }
-        }
+				Maze.SelectEnd2Cell(Maze.SelectedCell);
+			else
+				throw new Exception("Select a valid cell");
+		}
 
 		/// <summary>
 		/// Solve the initial state using the A* algorithm
@@ -414,11 +385,18 @@ namespace Maze
 						destination2 = Maze.End1Cell;
 					}
 
+					Results.Add($"first destination was chosen the {destination1} and second the {destination2}");
+
+					// search a path to the first destination
 					State initialState1 = new State(Maze.StartCell, destination1);
 					results1 = State.ASTARAnalysis(initialState1, cancellationToken.Token);
 
-					State initialState2 = new State(destination1, destination2);
-					results2 = State.ASTARAnalysis(initialState2, cancellationToken.Token);
+					// if a path to the first destination is found then search a path to the second destination
+					if (results1.FinalState != null)
+					{
+						State initialState2 = new State(destination1, destination2);
+						results2 = State.ASTARAnalysis(initialState2, cancellationToken.Token);
+					}
 				});
 			}
 			catch (Exception ex)
@@ -440,8 +418,6 @@ namespace Maze
 							if (state.Cell.Type == CellType.Free)
 								state.Cell.Type = CellType.Path1;
 						}
-
-						Results.AddRange(results1.GetResults());
 					}
 
 					if (results2?.FinalState != null)
@@ -455,10 +431,30 @@ namespace Maze
 								state.Cell.Type = CellType.PathCommon;
 						}
 
-						Results.AddRange(results2.GetResults());
 					}
 
 					Maze.Redraw();
+
+					Results.Add("");
+
+					if (results1 != null)
+						Results.AddRange(results1.GetSumResults());
+
+					if (results2 != null)
+						Results.AddRange(results2.GetSumResults());
+
+					Results.Add($"Total cost= {results1?.FinalState?.g + results2?.FinalState?.g}");
+					Results.Add($"Total states opened: {results1?.StatesOpened + results2?.StatesOpened}");
+					Results.Add($"Total search time: {results1?.TotalTime + results2?.TotalTime} ms");
+
+					Results.Add("");
+					Results.Add("Path found:");
+
+					if (results1 != null)
+						Results.AddRange(results1.GetPathResults());
+
+					if (results2 != null)
+						Results.AddRange(results2.GetPathResults());
 
 					resultsSource.Source = Results;
 					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ResultsView)));

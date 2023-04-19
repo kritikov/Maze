@@ -53,22 +53,22 @@
 
                         <Label Grid.Row="3" Grid.Column="0" Content="start cell" HorizontalContentAlignment="Right"/>
                         <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
-                            <TextBox Width="30" Text="{Binding StartPosition.Row, Mode=TwoWay}" IsEnabled="False"/>
-                            <TextBox Width="30" Text="{Binding StartPosition.Column, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="30" Text="{Binding Maze.StartCell.Row, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="30" Text="{Binding Maze.StartCell.Column, Mode=TwoWay}" IsEnabled="False"/>
                             <Button Content="set" ToolTip="Set the start cell from the selected cell in the maze" Click="SelectStartCell"/>
                         </StackPanel>
                         
                         <Label Grid.Row="4" Grid.Column="0" Content="end cell 1" HorizontalContentAlignment="Right"/>
                         <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
-                            <TextBox Width="30" Text="{Binding EndPosition1.Row, Mode=TwoWay}" IsEnabled="False"/>
-                            <TextBox Width="30" Text="{Binding EndPosition1.Column, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="30" Text="{Binding Maze.End1Cell.Row, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="30" Text="{Binding Maze.End1Cell.Column, Mode=TwoWay}" IsEnabled="False"/>
                             <Button Content="set" ToolTip="Set the end cell from the selected cell in the maze" Click="SelectEnd1Cell"/>
                         </StackPanel>
                         
                         <Label Grid.Row="5" Grid.Column="0" Content="end cell 2" HorizontalContentAlignment="Right"/>
                         <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
-                            <TextBox Width="30" Text="{Binding EndPosition2.Row, Mode=TwoWay}" IsEnabled="False"/>
-                            <TextBox Width="30" Text="{Binding EndPosition2.Column, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="30" Text="{Binding Maze.End2Cell.Row, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="30" Text="{Binding Maze.End2Cell.Column, Mode=TwoWay}" IsEnabled="False"/>
                             <Button Content="set" ToolTip="Set the end cell from the selected cell in the maze" Click="SelectEnd2Cell"/>
                         </StackPanel>
 
