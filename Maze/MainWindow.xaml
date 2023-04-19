@@ -27,8 +27,8 @@
                 <GroupBox Header="Parameters">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="3*"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
@@ -53,22 +53,22 @@
 
                         <Label Grid.Row="3" Grid.Column="0" Content="start cell" HorizontalContentAlignment="Right"/>
                         <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
-                            <TextBox Width="20" Text="{Binding StartPosition.Row, Mode=TwoWay}" IsEnabled="False"/>
-                            <TextBox Width="20" Text="{Binding StartPosition.Column, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="30" Text="{Binding StartPosition.Row, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="30" Text="{Binding StartPosition.Column, Mode=TwoWay}" IsEnabled="False"/>
                             <Button Content="set" ToolTip="Set the start cell from the selected cell in the maze" Click="SelectStartCell"/>
                         </StackPanel>
                         
                         <Label Grid.Row="4" Grid.Column="0" Content="end cell 1" HorizontalContentAlignment="Right"/>
                         <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
-                            <TextBox Width="20" Text="{Binding EndPosition1.Row, Mode=TwoWay}" IsEnabled="False"/>
-                            <TextBox Width="20" Text="{Binding EndPosition1.Column, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="30" Text="{Binding EndPosition1.Row, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="30" Text="{Binding EndPosition1.Column, Mode=TwoWay}" IsEnabled="False"/>
                             <Button Content="set" ToolTip="Set the end cell from the selected cell in the maze" Click="SelectEnd1Cell"/>
                         </StackPanel>
                         
                         <Label Grid.Row="5" Grid.Column="0" Content="end cell 2" HorizontalContentAlignment="Right"/>
                         <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
-                            <TextBox Width="20" Text="{Binding EndPosition2.Row, Mode=TwoWay}" IsEnabled="False"/>
-                            <TextBox Width="20" Text="{Binding EndPosition2.Column, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="30" Text="{Binding EndPosition2.Row, Mode=TwoWay}" IsEnabled="False"/>
+                            <TextBox Width="30" Text="{Binding EndPosition2.Column, Mode=TwoWay}" IsEnabled="False"/>
                             <Button Content="set" ToolTip="Set the end cell from the selected cell in the maze" Click="SelectEnd2Cell"/>
                         </StackPanel>
 
@@ -78,7 +78,9 @@
                 <WrapPanel Orientation="Vertical" HorizontalAlignment="Center">
                     <Button Content="recreate maze" Click="RecreateMaze" IsEnabled="{Binding AlgorithmIsRunning, Converter={StaticResource BooleanReverse}}"
                             ToolTip="Recreate the maze based on the given values of N and p"/>
-                    <Button Content="A*" Click="ASTARRun"  IsEnabled="{Binding AlgorithmIsRunning, Converter={StaticResource BooleanReverse}}"
+                    <Button Content="reset maze" Click="ResetMaze" IsEnabled="{Binding AlgorithmIsRunning, Converter={StaticResource BooleanReverse}}"
+                            ToolTip="Reset the maze to its initial condition before A* run"/>
+                    <Button Content="Run A*" Click="ASTARRun"  IsEnabled="{Binding AlgorithmIsRunning, Converter={StaticResource BooleanReverse}}"
                             ToolTip="Solve the initial state using the A* algorithm"/>
                     <Button Content="stop" IsEnabled="{Binding AlgorithmIsRunning}"
                             ToolTip="Stop the analysis while the A* is running"/>
@@ -92,6 +94,9 @@
             <TabControl Grid.Column="1">
                 <TabItem Header="Maze">
                     <Canvas Name="MazeCanvas" Margin="0" MouseLeftButtonDown="CanvasClick"/>
+                </TabItem>
+                <TabItem Header="Results">
+                    <ListBox ItemsSource="{Binding ResultsView}"/>
                 </TabItem>
                 <TabItem Header="Logs">
                     <ListBox ItemsSource="{Binding LogsView}"/>

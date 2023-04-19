@@ -48,6 +48,15 @@ namespace Maze
 			}
 		}
 
+		private CollectionViewSource resultsSource = new CollectionViewSource();
+		public ICollectionView ResultsView
+		{
+			get
+			{
+				return resultsSource.View;
+			}
+		}
+
 		public Classes.Maze Maze { get; set; }
 
 		private bool stretchCanvas = true;
@@ -77,7 +86,11 @@ namespace Maze
 		public Position EndPosition2 { get; set; } = new Position();
 
 		private CancellationTokenSource cancellationToken = new CancellationTokenSource();
-		public ObservableCollection<string> Results { get; set; } = new ObservableCollection<string>();
+
+		public List<string> Results { get; set; } = new List<string>();
+
+		
+		
 		#endregion
 
 
@@ -184,8 +197,28 @@ namespace Maze
 
 			try
 			{
-				ValidateParameters();
-				this.Maze.Construct();
+				StartPosition.Row = -1; 
+				StartPosition.Column = -1;
+				EndPosition1.Row = -1;
+				EndPosition1.Column = -1; 
+				EndPosition2.Row = -1;
+				EndPosition2.Column = -1; 
+
+				Maze.Construct();
+			}
+			catch (Exception ex)
+			{
+				Message = ex.Message;
+			}
+		}
+
+		private void ResetMaze(object sender, RoutedEventArgs e)
+		{
+			Message = "";
+
+			try
+			{
+				Maze.Reset();
 			}
 			catch (Exception ex)
 			{
@@ -199,8 +232,8 @@ namespace Maze
 
 			try
 			{
+				ValidateParameters();
 				AlgorithmIsRunning = true;
-
 				ASTARAnalysis();
 			}
 			catch (Exception ex)
@@ -275,11 +308,14 @@ namespace Maze
 
 			try
 			{
-				if (Maze.N < 5 || Maze.N > 50)
-					throw new Exception("The dimension of the maze are out of limits, the N must be between 5 and 50");
+				if (Maze.StartCell == null)
+					throw new Exception("You must set the start cell");
 
-				if (Maze.BlockedPossibility < 0 || Maze.BlockedPossibility > 1)
-					throw new Exception("he possibility of a cell to be blocked is out of limits, the P must be between 0 and 1");
+				if (Maze.End1Cell == null)
+					throw new Exception("You must set the end 1 cell");
+
+				if (Maze.End2Cell == null)
+					throw new Exception("You must set the end 2 cell");
 
 
 			}
@@ -350,6 +386,11 @@ namespace Maze
 		/// <returns></returns>
 		private async Task ASTARAnalysis()
 		{
+			Results.Clear();
+			Maze.Reset();
+			AStarResults results1 = null;
+			AStarResults results2 = null;
+
 			try
 			{
 				cancellationToken = new CancellationTokenSource();
@@ -361,14 +402,23 @@ namespace Maze
 						Logs.Clear();
 					});
 
-					// TODO: temporary search manually in the the first end
-					if (Maze.StartCell != null && Maze.End1Cell != null)
+					Cell destination1, destination2;
+					if (Maze.HeuristicDistance(Maze.StartCell, Maze.End1Cell) <= Maze.HeuristicDistance(Maze.StartCell, Maze.End2Cell))
 					{
-
-						State initialState = new State(Maze.StartCell, Maze.End1Cell);
-						Results = State.ASTARAnalysis(initialState, cancellationToken.Token);
-
+						destination1 = Maze.End1Cell;
+						destination2 = Maze.End2Cell;
 					}
+					else
+					{
+						destination1 = Maze.End2Cell;
+						destination2 = Maze.End1Cell;
+					}
+
+					State initialState1 = new State(Maze.StartCell, destination1);
+					results1 = State.ASTARAnalysis(initialState1, cancellationToken.Token);
+
+					State initialState2 = new State(destination1, destination2);
+					results2 = State.ASTARAnalysis(initialState2, cancellationToken.Token);
 				});
 			}
 			catch (Exception ex)
@@ -381,10 +431,43 @@ namespace Maze
 				Application.Current.Dispatcher.Invoke(() =>
 				{
 					AlgorithmIsRunning = false;
-					CommandManager.InvalidateRequerySuggested();
+
+					if (results1?.FinalState != null)
+					{
+						List<State> statesInPath = results1.FinalState.GetPath();
+						foreach (var state in statesInPath)
+						{
+							if (state.Cell.Type == CellType.Free)
+								state.Cell.Type = CellType.Path1;
+						}
+
+						Results.AddRange(results1.GetResults());
+					}
+
+					if (results2?.FinalState != null)
+					{
+						List<State> statesInPath = results2.FinalState.GetPath();
+						foreach (var state in statesInPath)
+						{
+							if (state.Cell.Type == CellType.Free)
+								state.Cell.Type = CellType.Path2;
+							else if (state.Cell.Type == CellType.Path1)
+								state.Cell.Type = CellType.PathCommon;
+						}
+
+						Results.AddRange(results2.GetResults());
+					}
+
+					Maze.Redraw();
+
+					resultsSource.Source = Results;
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ResultsView)));
 				});
 			}
 		}
+		
 		#endregion
+
+		
 	}
 }

@@ -23,15 +23,15 @@ namespace Maze.Classes
 		private Brush Background = new SolidColorBrush(Colors.White);
 		private Canvas Canvas;
 
-		public int Rows = 5;
-		public int Columns = 5;
+		public int Rows = 15;
+		public int Columns = 15;
 		public Cell[,] Cells;
 		public double Width => Canvas.ActualWidth;
 		public double Height => Canvas.ActualHeight;
 		public int CellWidth => (int)(Width / Columns);
 		public int CellHeight => (int)(Height / Rows);
 
-		private int n = 5;
+		private int n = 15;
 		public int N
 		{
 			get { return n; }
@@ -126,14 +126,29 @@ namespace Maze.Classes
 		/// </summary>
 		public void Construct()
 		{
-			Canvas.Background = Background;
-			Canvas.Children.Clear();
-			SelectedCell = null;
-			StartCell = null;
-			End1Cell = null;
-			End2Cell = null;
+			try
+			{
+				if (N < 5 || N > 50)
+					throw new Exception("The dimension of the maze are out of limits, the N must be between 5 and 50");
 
-			CreateCells();
+				if (BlockedPossibility < 0 || BlockedPossibility > 1)
+					throw new Exception("The possibility of a cell to be blocked is out of limits, the P must be between 0 and 1");
+
+				Canvas.Background = Background;
+				Canvas.Children.Clear();
+				SelectedCell = null;
+				StartCell = null;
+				End1Cell = null;
+				End2Cell = null;
+
+				CreateCells();
+
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+
 		}
 
 		/// <summary>
@@ -177,7 +192,7 @@ namespace Maze.Classes
 		}
 
 		/// <summary>
-		/// Draw the cells in the screen.Should run every time we change the size of the window
+		/// Draw the cells in the screen based on the current sizes of the window
 		/// </summary>
 		public void Redraw()
 		{
@@ -188,6 +203,24 @@ namespace Maze.Classes
 					Cells[i,j].SetRectangle();
 				}
 			}
+		}
+
+		/// <summary>
+		/// Reset the maze to its initial condition before the A* runs
+		/// </summary>
+		public void Reset()
+		{
+			for (int i = 0; i < Rows; i++)
+			{
+				for (int j = 0; j < Columns; j++)
+				{
+					var cell = Cells[i, j];
+					if (cell.Type == CellType.Path1 || cell.Type == CellType.Path2 || cell.Type == CellType.PathCommon)
+						cell.Type = CellType.Free;
+				}
+			}
+
+			Redraw();
 		}
 
 		/// <summary>
@@ -307,10 +340,10 @@ namespace Maze.Classes
 		/// <returns></returns>
 		public double HeuristicDistance(Cell startCell, Cell endCell)
 		{
-			double h = Math.Abs(endCell.Column - startCell.Column) * 0.5 + Math.Abs(endCell.Row - startCell.Row) * 1;
-
+			double h = State.HeuristicDistance(startCell.Row, startCell.Column, endCell.Row, endCell.Column);
 			return h;
 		}
+		
 		#endregion
 	}
 }

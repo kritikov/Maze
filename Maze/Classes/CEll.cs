@@ -12,7 +12,10 @@ namespace Maze.Classes
 		Blocked,
 		Start,
 		End1,
-		End2
+		End2,
+		Path1, 
+		Path2,
+		PathCommon
 	}
 
 	public enum Direction
@@ -69,6 +72,12 @@ namespace Maze.Classes
                 Rectangle.Fill = new SolidColorBrush(Colors.GreenYellow);
 			else if (Type == CellType.End2)
                 Rectangle.Fill = new SolidColorBrush(Colors.YellowGreen);
+			else if (Type == CellType.Path1)
+                Rectangle.Fill = new SolidColorBrush(Colors.MediumPurple);
+			else if (Type == CellType.Path2)
+                Rectangle.Fill = new SolidColorBrush(Colors.MediumPurple);
+			else if (Type == CellType.PathCommon)
+                Rectangle.Fill = new SolidColorBrush(Colors.Purple);
 
 			Rectangle.Width = Maze.CellWidth;
 			Rectangle.Height = Maze.CellHeight;

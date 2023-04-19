@@ -24,6 +24,7 @@ namespace Maze.Classes
 		{
 			get { return this.ToString(); }
 		}
+		
 		#endregion
 
 
@@ -46,7 +47,7 @@ namespace Maze.Classes
 
 		public override string ToString()
 		{
-			string result = $"Position = ({Cell.Row}, {Cell.Column})";
+			string result = $"({Cell.Row}, {Cell.Column})";
 			return result;
 		}
 
@@ -171,9 +172,9 @@ namespace Maze.Classes
 		/// <summary>
 		/// Analyze a state using the A* algorithm
 		/// </summary>
-		public static ObservableCollection<string> ASTARAnalysis(State initialState, CancellationToken cancellationToken)
+		public static AStarResults ASTARAnalysis(State initialState, CancellationToken cancellationToken)
 		{
-			ObservableCollection<string> results = new ObservableCollection<string>();
+			AStarResults results = new AStarResults(initialState);
 			var watch = System.Diagnostics.Stopwatch.StartNew();
 
 			try
@@ -311,29 +312,14 @@ namespace Maze.Classes
 				// if a solution is found
 				if (finalState != null)
 				{
-					results.Add($"Final state found: {finalState.DisplayValue} with g={selectedState?.g}, h={selectedState?.h}, f={selectedState?.f}");
-					results.Add($"Final cost = {selectedState?.g}");
-					results.Add($"States opened: {statesOpened}");
-					results.Add($"Total time: {watch.ElapsedMilliseconds} ms");
-
-					List<State> statesInPath = finalState.GetPath();
-
-					results.Add($"Path until final state found: ");
-					foreach (var state in statesInPath)
-					{
-						if (state.Parent == null)
-							results.Add($"initial state {state?.DisplayValue} with g={state?.g}, h={state?.h}, f={state?.f}");
-						else
-							results.Add($"move at state {state?.DisplayValue} with g={state?.g}, h={state?.h}, f={state?.f}");
-					}
-				}
-				else
-				{
-					results.Add($"No final state found");
+					results.FinalState = finalState;
+					results.TotalTime = watch.ElapsedMilliseconds;
+					results.StatesOpened = statesOpened;
 				}
 
 				// write the results in the log
-				foreach (var message in results)
+				var messages = results.GetResults();
+				foreach (var message in messages)
 				{
 					Logs.Write(message);
 				}
