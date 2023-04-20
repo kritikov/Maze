@@ -1,22 +1,12 @@
 ﻿using Maze.Classes;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-//using static System.Net.Mime.MediaTypeNames;
 
 namespace Maze
 {
@@ -59,17 +49,6 @@ namespace Maze
 
 		public Classes.Maze Maze { get; set; }
 
-		private bool stretchCanvas = true;
-		public bool StretchCanvas
-		{
-			get { return stretchCanvas; }
-			set
-			{
-				stretchCanvas = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StretchCanvas)));
-			}
-		}
-
 		private bool algorithmIsRunning = false;
 		public bool AlgorithmIsRunning
 		{
@@ -82,10 +61,6 @@ namespace Maze
 		}
 
 		private CancellationTokenSource cancellationToken = new CancellationTokenSource();
-
-		public List<string> Results { get; set; } = new List<string>();
-
-		
 		
 		#endregion
 
@@ -99,7 +74,6 @@ namespace Maze
 			this.DataContext = this;
 			logsSource.Source = Logs.List;
             Maze = new Classes.Maze(MazeCanvas);
-
 		}
 
 		#endregion
@@ -125,7 +99,7 @@ namespace Maze
 
 		private void ExitProgram(object sender, RoutedEventArgs e)
 		{
-			System.Windows.Application.Current.Shutdown();
+			Application.Current.Shutdown();
 		}
 
 		private void CanvasClick(object sender, MouseButtonEventArgs e)
@@ -134,18 +108,24 @@ namespace Maze
 
 			try
 			{
+				// get the point where moise clicked
 				Point point = Mouse.GetPosition(MazeCanvas);
-				var selectedSell = Maze.GetCell(point);
-				Maze.SelectCell(selectedSell);
 
+				// get the corresponding cell
+				var selectedSell = Maze.GetCell(point);
+
+				// select the cell
+				Maze.SelectCell(selectedSell);
                 Message = $"cell position: {selectedSell.Row}, {selectedSell.Column}";
 
+				// display the heuristic distance from start to the selected cell
 				if (Maze.StartCell != null)
 				{
-					double h = Maze.HeuristicDistance(Maze.StartCell, selectedSell);
-					Message += $", euristic distance to selected cell: {h}";
+					double h = selectedSell.HeuristicDistance(Maze.StartCell);
+					Message += $", heuristic distance to selected cell: {h}";
 				}
 
+				// reverse block - unblock oh the cell
 				if (Maze.EditCells == true)
 					selectedSell.RevertBlocked();
 			}
@@ -161,10 +141,7 @@ namespace Maze
 
 			try
 			{
-				//MazeCanvas.Width = MazeScroller.ActualWidth - 17;
-				//MazeCanvas.Height = MazeScroller.ActualHeight - 17;
-
-				this.Maze.Construct();
+				Maze.Create();
 			}
 			catch (Exception ex)
 			{
@@ -178,8 +155,7 @@ namespace Maze
 
 			try
 			{
-				if (Maze.Cells != null)
-					Maze.Redraw();
+				Maze.Redraw();
 			}
 			catch (Exception ex)
 			{
@@ -193,7 +169,7 @@ namespace Maze
 
 			try
 			{
-				Maze.Construct();
+				Maze.Create();
 			}
 			catch (Exception ex)
 			{
@@ -223,6 +199,7 @@ namespace Maze
 			{
 				ValidateParameters();
 				AlgorithmIsRunning = true;
+				Maze.Reset();
 				ASTARAnalysis();
 			}
 			catch (Exception ex)
@@ -293,8 +270,6 @@ namespace Maze
 		/// </summary>
 		private void ValidateParameters()
 		{
-			Message = "";
-
 			try
 			{
 				if (Maze.StartCell == null)
@@ -305,14 +280,11 @@ namespace Maze
 
 				if (Maze.End2Cell == null)
 					throw new Exception("You must set the end 2 cell");
-
-
 			}
 			catch (Exception ex)
 			{
 				throw ex;
 			}
-
 		}
 
 		/// <summary>
@@ -321,10 +293,17 @@ namespace Maze
 		/// <exception cref="Exception"></exception>
         private void SelectStartCell()
         {
-            if (Maze.SelectedCell != null && Maze.SelectedCell.Type == CellType.Free)
-				Maze.SelectStartCell(Maze.SelectedCell);
-			else
-				throw new Exception("Select a valid cell");
+			try
+			{
+				if (Maze.SelectedCell != null && Maze.SelectedCell.Type == CellType.Free)
+					Maze.SelectStartCell(Maze.SelectedCell);
+				else
+					throw new Exception("Select a valid cell");
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
 		}
 
 		/// <summary>
@@ -333,10 +312,17 @@ namespace Maze
 		/// <exception cref="Exception"></exception>
 		private void SelectEnd1Cell()
         {
-            if (Maze.SelectedCell != null && Maze.SelectedCell.Type == CellType.Free)
-				Maze.SelectEnd1Cell(Maze.SelectedCell);
-			else
-				throw new Exception("Select a valid cell");
+			try
+			{
+				if (Maze.SelectedCell != null && Maze.SelectedCell.Type == CellType.Free)
+					Maze.SelectEnd1Cell(Maze.SelectedCell);
+				else
+					throw new Exception("Select a valid cell");
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
 		}
 
 		/// <summary>
@@ -345,10 +331,17 @@ namespace Maze
 		/// <exception cref="Exception"></exception>
 		private void SelectEnd2Cell()
         {
-            if (Maze.SelectedCell != null && Maze.SelectedCell.Type == CellType.Free)
-				Maze.SelectEnd2Cell(Maze.SelectedCell);
-			else
-				throw new Exception("Select a valid cell");
+			try
+			{
+				if (Maze.SelectedCell != null && Maze.SelectedCell.Type == CellType.Free)
+					Maze.SelectEnd2Cell(Maze.SelectedCell);
+				else
+					throw new Exception("Select a valid cell");
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
 		}
 
 		/// <summary>
@@ -357,8 +350,6 @@ namespace Maze
 		/// <returns></returns>
 		private async Task ASTARAnalysis()
 		{
-			Results.Clear();
-			Maze.Reset();
 			AStarResults results1 = null;
 			AStarResults results2 = null;
 
@@ -374,7 +365,7 @@ namespace Maze
 					});
 
 					Cell destination1, destination2;
-					if (Maze.HeuristicDistance(Maze.StartCell, Maze.End1Cell) <= Maze.HeuristicDistance(Maze.StartCell, Maze.End2Cell))
+					if (Maze.End1Cell.HeuristicDistance(Maze.StartCell) <= Maze.End2Cell.HeuristicDistance(Maze.StartCell))
 					{
 						destination1 = Maze.End1Cell;
 						destination2 = Maze.End2Cell;
@@ -384,8 +375,6 @@ namespace Maze
 						destination1 = Maze.End2Cell;
 						destination2 = Maze.End1Cell;
 					}
-
-					Results.Add($"first destination was chosen the {destination1} and second the {destination2}");
 
 					// search a path to the first destination
 					State initialState1 = new State(Maze.StartCell, destination1);
@@ -410,6 +399,7 @@ namespace Maze
 				{
 					AlgorithmIsRunning = false;
 
+					// if the first path is found then change their cells type to add color
 					if (results1?.FinalState != null)
 					{
 						List<State> statesInPath = results1.FinalState.GetPath();
@@ -420,6 +410,7 @@ namespace Maze
 						}
 					}
 
+					// if the second path is found then change their cells type to add color
 					if (results2?.FinalState != null)
 					{
 						List<State> statesInPath = results2.FinalState.GetPath();
@@ -430,33 +421,11 @@ namespace Maze
 							else if (state.Cell.Type == CellType.Path1)
 								state.Cell.Type = CellType.PathCommon;
 						}
-
 					}
 
 					Maze.Redraw();
 
-					Results.Add("");
-
-					if (results1 != null)
-						Results.AddRange(results1.GetSumResults());
-
-					if (results2 != null)
-						Results.AddRange(results2.GetSumResults());
-
-					Results.Add($"Total cost= {results1?.FinalState?.g + results2?.FinalState?.g}");
-					Results.Add($"Total states opened: {results1?.StatesOpened + results2?.StatesOpened}");
-					Results.Add($"Total search time: {results1?.TotalTime + results2?.TotalTime} ms");
-
-					Results.Add("");
-					Results.Add("Path found:");
-
-					if (results1 != null)
-						Results.AddRange(results1.GetPathResults());
-
-					if (results2 != null)
-						Results.AddRange(results2.GetPathResults());
-
-					resultsSource.Source = Results;
+					resultsSource.Source = AStarResults.GetCombinedResults(results1, results2);
 					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ResultsView)));
 				});
 			}

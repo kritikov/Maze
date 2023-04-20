@@ -41,6 +41,7 @@ namespace Maze.Classes
 				Rows = n;
 				Columns = n;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(N)));
+				Create();
 			}
 		}
 
@@ -124,7 +125,7 @@ namespace Maze.Classes
 		/// <summary>
 		/// Create the maze. This is used only once and when we change the number of cells
 		/// </summary>
-		public void Construct()
+		public void Create()
 		{
 			try
 			{
@@ -196,11 +197,14 @@ namespace Maze.Classes
 		/// </summary>
 		public void Redraw()
 		{
-			for (int i=0; i < Rows; i++)
+			if (Cells != null)
 			{
-				for (int j = 0; j < Columns; j++)
+				for (int i = 0; i < Rows; i++)
 				{
-					Cells[i,j].SetRectangle();
+					for (int j = 0; j < Columns; j++)
+					{
+						Cells[i, j].SetRectangle();
+					}
 				}
 			}
 		}
@@ -292,7 +296,9 @@ namespace Maze.Classes
             StartCell = cell;
             StartCell?.SetColor(Colors.Bisque);
             StartCell.Type = CellType.Start;
-        }
+
+			Reset();
+		}
 
 		/// <summary>
 		/// Select a cell as the end position 1
@@ -311,7 +317,9 @@ namespace Maze.Classes
             End1Cell = cell;
             End1Cell?.SetColor(Colors.GreenYellow);
             End1Cell.Type = CellType.End1;
-        }
+
+			Reset();
+		}
 
         /// <summary>
         /// Select a cell as the end position 1
@@ -330,18 +338,8 @@ namespace Maze.Classes
             End2Cell = cell;
             End2Cell?.SetColor(Colors.YellowGreen);
             End2Cell.Type = CellType.End2;
-        }
 
-		/// <summary>
-		/// The euritic function that calculates the cost between two cells
-		/// </summary>
-		/// <param name="startCell"></param>
-		/// <param name="endCell"></param>
-		/// <returns></returns>
-		public double HeuristicDistance(Cell startCell, Cell endCell)
-		{
-			double h = State.HeuristicDistance(startCell.Row, startCell.Column, endCell.Row, endCell.Column);
-			return h;
+			Reset();
 		}
 		
 		#endregion

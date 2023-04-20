@@ -185,5 +185,18 @@ namespace Maze.Classes
 				throw ex;
 			}
 		}
+
+		/// <summary>
+		/// Calculate the cell's heuristic distance from another cell
+		/// </summary>
+		/// <param name="fromCell"></param>
+		/// <returns></returns>
+		public double HeuristicDistance(Cell fromCell)
+		{
+			double distance = Math.Abs(Column - fromCell.Column) * 0.5 + Math.Abs(Row - fromCell.Row) * 1;
+
+			return distance;
+		}
+
 	}
 }

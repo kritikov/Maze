@@ -71,7 +71,6 @@ namespace Maze.Classes
 		{
 			State? parent = this.Parent;
 
-			// TODO: search by CurrentCell
 			while (parent != null)
 			{
 				if (parent.Cell.Row == this.Cell.Row && parent.Cell.Column == this.Cell.Column)
@@ -84,7 +83,7 @@ namespace Maze.Classes
 		}
 
 		/// <summary>
-		/// Get a list with all states in the path from the root to the current state
+		/// Get a list with all states in the path from the root to the this state
 		/// </summary>
 		/// <returns></returns>
 		public List<State> GetPath()
@@ -107,7 +106,7 @@ namespace Maze.Classes
 		}
 
 		/// <summary>
-		/// Create a new state that is child of this state. The child has an index that splits its list of numbers at two parts.
+		/// Create a new state that is child of this state.
 		/// </summary>
 		/// <param name="splitIndex"></param>
 		/// <returns></returns>
@@ -131,21 +130,8 @@ namespace Maze.Classes
 			if (Parent != null)
 				g = Parent.g + Weight;
 
-			h = HeuristicDistance(Cell.Row, Cell.Column, Destination.Row, Destination.Column);
+			h = Cell.HeuristicDistance(Destination);
 			f = g + h;
-		}
-
-		/// <summary>
-		/// The euritic function that calculates the cost between two cells
-		/// </summary>
-		/// <param name="startCell"></param>
-		/// <param name="endCell"></param>
-		/// <returns></returns>
-		public static double HeuristicDistance(int startRow, int startColumn, int endRow, int endColumn)
-		{
-			double h = Math.Abs(endColumn - startColumn) * 0.5 + Math.Abs(endRow - startRow) * 1;
-
-			return h;
 		}
 
 		/// <summary>

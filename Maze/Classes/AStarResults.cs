@@ -99,5 +99,40 @@ namespace Maze.Classes
 
 			return path;
 		}
+	
+		/// <summary>
+		/// Get the combined results from two other results
+		/// </summary>
+		/// <param name="results1"></param>
+		/// <param name="results2"></param>
+		/// <returns></returns>
+		public static List<string> GetCombinedResults(AStarResults results1, AStarResults results2)
+		{
+			List<string> result = new List<string>();
+
+			result.Add($"As first destination was chosen the {results1.InitialState.Destination} and as second the {results2.InitialState.Destination}");
+			result.Add("");
+			result.Add($"Total cost= {results1?.FinalState?.g + results2?.FinalState?.g}");
+			result.Add($"Total states opened: {results1?.StatesOpened + results2?.StatesOpened}");
+			result.Add($"Total search time: {results1?.TotalTime + results2?.TotalTime} ms");
+			result.Add("");
+
+			if (results1 != null)
+				result.AddRange(results1.GetSumResults());
+
+			if (results2 != null)
+				result.AddRange(results2.GetSumResults());
+
+			result.Add("Path found:");
+
+			if (results1 != null)
+				result.AddRange(results1.GetPathResults());
+
+			if (results2 != null)
+				result.AddRange(results2.GetPathResults());
+
+			return result;
+		}
+	
 	}
 }
