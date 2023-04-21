@@ -274,10 +274,10 @@ namespace Maze.Classes
 		/// <param name="cell"></param>
 		public void SelectCell(Cell cell)
 		{
-			SelectedCell?.SetBorder(Colors.Black);
+			SelectedCell?.Deselect();
 			SelectedCell = cell;
-			SelectedCell?.SetBorder(Colors.Yellow);
-        }
+			SelectedCell?.Select();
+		}
 
 		/// <summary>
 		/// Select a cell as the start position

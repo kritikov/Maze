@@ -84,23 +84,7 @@ namespace Maze.Classes
 		{
 			Rectangle.StrokeThickness = 1;
 			SetBorder(Colors.Black);
-
-            if (Type == CellType.Free)
-				Rectangle.Fill = new SolidColorBrush(Colors.White);
-			else if (Type == CellType.Blocked)
-                Rectangle.Fill = new SolidColorBrush(Colors.DarkBlue);
-			else if (Type == CellType.Start)
-                Rectangle.Fill = new SolidColorBrush(Colors.Bisque);
-			else if (Type == CellType.End1)
-                Rectangle.Fill = new SolidColorBrush(Colors.GreenYellow);
-			else if (Type == CellType.End2)
-                Rectangle.Fill = new SolidColorBrush(Colors.YellowGreen);
-			else if (Type == CellType.Path1)
-                Rectangle.Fill = new SolidColorBrush(Colors.MediumPurple);
-			else if (Type == CellType.Path2)
-                Rectangle.Fill = new SolidColorBrush(Colors.MediumPurple);
-			else if (Type == CellType.PathCommon)
-                Rectangle.Fill = new SolidColorBrush(Colors.Purple);
+			Paint();
 
 			Rectangle.Width = Maze.CellWidth;
 			Rectangle.Height = Maze.CellHeight;
@@ -121,6 +105,29 @@ namespace Maze.Classes
 		}
 
 		/// <summary>
+		/// Paint the cell in the screen based on its values
+		/// </summary>
+		public void Paint()
+		{
+			if (Type == CellType.Free)
+				Rectangle.Fill = new SolidColorBrush(Colors.White);
+			else if (Type == CellType.Blocked)
+				Rectangle.Fill = new SolidColorBrush(Colors.DarkBlue);
+			else if (Type == CellType.Start)
+				Rectangle.Fill = new SolidColorBrush(Colors.Bisque);
+			else if (Type == CellType.End1)
+				Rectangle.Fill = new SolidColorBrush(Colors.GreenYellow);
+			else if (Type == CellType.End2)
+				Rectangle.Fill = new SolidColorBrush(Colors.YellowGreen);
+			else if (Type == CellType.Path1)
+				Rectangle.Fill = new SolidColorBrush(Colors.MediumPurple);
+			else if (Type == CellType.Path2)
+				Rectangle.Fill = new SolidColorBrush(Colors.MediumPurple);
+			else if (Type == CellType.PathCommon)
+				Rectangle.Fill = new SolidColorBrush(Colors.Purple);
+		}
+
+		/// <summary>
 		/// Revert the type cell from bloked to unblocked and vice versa
 		/// </summary>
 		public void RevertBlocked()
@@ -135,6 +142,22 @@ namespace Maze.Classes
 				Type = CellType.Free;
 				Rectangle.Fill = new SolidColorBrush(Colors.White);
 			}
+		}
+
+		/// <summary>
+		/// Changes format to view as selected
+		/// </summary>
+		public void Select()
+		{
+			SetBorder(Colors.Yellow);
+		}
+
+		/// <summary>
+		/// Changes format to normal
+		/// </summary>
+		public void Deselect()
+		{
+			SetBorder(Colors.Black);
 		}
 
 		/// <summary>

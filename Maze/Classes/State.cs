@@ -129,6 +129,8 @@ namespace Maze.Classes
 		{
 			if (Parent != null)
 				g = Parent.g + Weight;
+			else 
+				g = 0;
 
 			h = Cell.HeuristicDistance(Destination);
 			f = g + h;
@@ -158,10 +160,12 @@ namespace Maze.Classes
 		/// <summary>
 		/// Analyze a state using the A* algorithm
 		/// </summary>
-		public static AStarResults ASTARAnalysis(State initialState, CancellationToken cancellationToken)
+		public static AStarResults ASTARAnalysis(Cell startCell, Cell endCell, CancellationToken cancellationToken)
 		{
-			AStarResults results = new AStarResults(initialState);
 			var watch = System.Diagnostics.Stopwatch.StartNew();
+
+			State initialState = new State(startCell, endCell);
+			AStarResults results = new AStarResults(initialState);
 
 			try
 			{
@@ -175,12 +179,9 @@ namespace Maze.Classes
 				Logs.Write($"**** Analyzing initial state {initialState.DisplayValue} with A* algorithm ****");
 				Logs.Write($"Initial state: {initialState.DisplayValue} with g={initialState.g}, h={initialState.h}, f={initialState.f}");
 
-				// if the initial state is the same as the destination then is the state we search
+				// if the initial state is the same as the destination then is the state we want
 				if (initialState.IsFinal())
 					finalState = initialState;
-
-				// evaluate the initial state
-				initialState.Evaluate();
 
 				while (finalState == null && openStates.Count != 0)
 				{
@@ -306,9 +307,7 @@ namespace Maze.Classes
 				// write the results in the log
 				var messages = results.GetResults();
 				foreach (var message in messages)
-				{
 					Logs.Write(message);
-				}
 
 				return results;
 			}

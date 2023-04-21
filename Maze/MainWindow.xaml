@@ -6,7 +6,7 @@
         xmlns:Converters="clr-namespace:Maze.Classes"
         xmlns:local="clr-namespace:Maze"
         mc:Ignorable="d"
-        Title="Maze" Height="550" Width="800" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
+        Title="Maze" Height="650" Width="1000" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged">
 
     <Window.Resources>
         <Converters:BooleanReverse x:Key="BooleanReverse"/>
@@ -80,7 +80,7 @@
                             ToolTip="Recreate the maze based on the given values of N and p"/>
                     <Button Content="reset maze" Click="ResetMaze" IsEnabled="{Binding AlgorithmIsRunning, Converter={StaticResource BooleanReverse}}"
                             ToolTip="Reset the maze to its initial condition before A* run"/>
-                    <Button Content="Run A*" Click="ASTARRun"  IsEnabled="{Binding AlgorithmIsRunning, Converter={StaticResource BooleanReverse}}"
+                    <Button Content="run A*" Click="ASTARRun"  IsEnabled="{Binding AlgorithmIsRunning, Converter={StaticResource BooleanReverse}}"
                             ToolTip="Solve the initial state using the A* algorithm"/>
                     <Button Content="stop" IsEnabled="{Binding AlgorithmIsRunning}"
                             ToolTip="Stop the analysis while the A* is running"/>
@@ -93,7 +93,7 @@
 
             <TabControl Grid.Column="1">
                 <TabItem Header="Maze">
-                    <Canvas Name="MazeCanvas" Margin="0" MouseLeftButtonDown="CanvasClick"/>
+                    <Canvas Name="MazeCanvas" Margin="0" MouseLeftButtonDown="MazeClick"/>
                 </TabItem>
                 <TabItem Header="Results">
                     <ListBox ItemsSource="{Binding ResultsView}"/>

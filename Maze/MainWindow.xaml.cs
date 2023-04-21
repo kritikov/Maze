@@ -102,13 +102,13 @@ namespace Maze
 			Application.Current.Shutdown();
 		}
 
-		private void CanvasClick(object sender, MouseButtonEventArgs e)
+		private void MazeClick(object sender, MouseButtonEventArgs e)
 		{
 			Message = "";
 
 			try
 			{
-				// get the point where moise clicked
+				// get the point where mouse clicked
 				Point point = Mouse.GetPosition(MazeCanvas);
 
 				// get the corresponding cell
@@ -377,15 +377,11 @@ namespace Maze
 					}
 
 					// search a path to the first destination
-					State initialState1 = new State(Maze.StartCell, destination1);
-					results1 = State.ASTARAnalysis(initialState1, cancellationToken.Token);
+					results1 = State.ASTARAnalysis(Maze.StartCell, destination1, cancellationToken.Token);
 
 					// if a path to the first destination is found then search a path to the second destination
 					if (results1.FinalState != null)
-					{
-						State initialState2 = new State(destination1, destination2);
-						results2 = State.ASTARAnalysis(initialState2, cancellationToken.Token);
-					}
+						results2 = State.ASTARAnalysis(destination1, destination2, cancellationToken.Token);
 				});
 			}
 			catch (Exception ex)
