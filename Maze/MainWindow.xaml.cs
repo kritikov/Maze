@@ -116,7 +116,7 @@ namespace Maze
 
 				// select the cell
 				Maze.SelectCell(selectedSell);
-                Message = $"cell position: {selectedSell.Row}, {selectedSell.Column}";
+                Message = $"cell position: ({selectedSell.Row}, {selectedSell.Column})";
 
 				// display the heuristic distance from start to the selected cell
 				if (Maze.StartCell != null)
