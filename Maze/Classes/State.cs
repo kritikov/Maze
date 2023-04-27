@@ -195,7 +195,7 @@ namespace Maze.Classes
 						// create the child state with the proper cost
 						State childState = selectedState.GetChild(rightCell, 0.5);
 
-						// if the child hasnt appears before in its anchestors then use it
+						// if the child has not appeared before in its anchestors then use it
 						if (childState.IsUniqueDescendant())
 						{
 							// evaluate child
